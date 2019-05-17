@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.452
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6127C084-F959-414F-8216-44CFD83548BD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{9BB24F6C-F539-469B-9529-EACC51AF3CF1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{8D147784-0482-4608-9793-647A4BC798D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControlHorario.Api", "ControlHorario.Api\ControlHorario.Api.csproj", "{49B29E77-5031-478C-9770-8FD64F619C45}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControlHorario.Domain", "src\ControlHorario.Domain\ControlHorario.Domain.csproj", "{16691BC7-C6B3-4F04-819F-F6F56FA0067D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControlHorario.AzureTable.DataAccess", "src\ControlHorario.AzureTable.DataAccess\ControlHorario.AzureTable.DataAccess.csproj", "{A69F7B2F-5C97-406F-B78D-C20880024365}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{49B29E77-5031-478C-9770-8FD64F619C45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49B29E77-5031-478C-9770-8FD64F619C45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49B29E77-5031-478C-9770-8FD64F619C45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49B29E77-5031-478C-9770-8FD64F619C45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16691BC7-C6B3-4F04-819F-F6F56FA0067D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16691BC7-C6B3-4F04-819F-F6F56FA0067D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16691BC7-C6B3-4F04-819F-F6F56FA0067D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16691BC7-C6B3-4F04-819F-F6F56FA0067D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A69F7B2F-5C97-406F-B78D-C20880024365}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A69F7B2F-5C97-406F-B78D-C20880024365}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A69F7B2F-5C97-406F-B78D-C20880024365}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A69F7B2F-5C97-406F-B78D-C20880024365}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{49B29E77-5031-478C-9770-8FD64F619C45} = {9BB24F6C-F539-469B-9529-EACC51AF3CF1}
+		{16691BC7-C6B3-4F04-819F-F6F56FA0067D} = {6127C084-F959-414F-8216-44CFD83548BD}
+		{A69F7B2F-5C97-406F-B78D-C20880024365} = {6127C084-F959-414F-8216-44CFD83548BD}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1BDF4D1D-7FEA-4A47-A9FC-A8DCEFCFB46E}
+	EndGlobalSection
+EndGlobal
