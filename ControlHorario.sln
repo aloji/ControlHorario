@@ -5,17 +5,15 @@ VisualStudioVersion = 16.0.28803.452
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6127C084-F959-414F-8216-44CFD83548BD}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{9BB24F6C-F539-469B-9529-EACC51AF3CF1}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{8D147784-0482-4608-9793-647A4BC798D7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControlHorario.Domain", "src\ControlHorario.Domain\ControlHorario.Domain.csproj", "{16691BC7-C6B3-4F04-819F-F6F56FA0067D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControlHorario.AzureTable.DataAccess", "src\ControlHorario.AzureTable.DataAccess\ControlHorario.AzureTable.DataAccess.csproj", "{A69F7B2F-5C97-406F-B78D-C20880024365}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControlHorario.Api", "samples\ControlHorario.Api\ControlHorario.Api.csproj", "{40BB2F44-B11A-43F5-BF32-EB4ACF609E32}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControlHorario.Application", "src\ControlHorario.Application\ControlHorario.Application.csproj", "{F7AA0BF0-96B5-4632-929C-E2D91A80CCE8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControlHorario.Api", "src\ControlHorario.Api\ControlHorario.Api.csproj", "{3AEA3B2B-92C2-49CA-B28D-E06B00E38FEB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,14 +29,14 @@ Global
 		{A69F7B2F-5C97-406F-B78D-C20880024365}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A69F7B2F-5C97-406F-B78D-C20880024365}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A69F7B2F-5C97-406F-B78D-C20880024365}.Release|Any CPU.Build.0 = Release|Any CPU
-		{40BB2F44-B11A-43F5-BF32-EB4ACF609E32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{40BB2F44-B11A-43F5-BF32-EB4ACF609E32}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{40BB2F44-B11A-43F5-BF32-EB4ACF609E32}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{40BB2F44-B11A-43F5-BF32-EB4ACF609E32}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F7AA0BF0-96B5-4632-929C-E2D91A80CCE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F7AA0BF0-96B5-4632-929C-E2D91A80CCE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7AA0BF0-96B5-4632-929C-E2D91A80CCE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7AA0BF0-96B5-4632-929C-E2D91A80CCE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AEA3B2B-92C2-49CA-B28D-E06B00E38FEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AEA3B2B-92C2-49CA-B28D-E06B00E38FEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AEA3B2B-92C2-49CA-B28D-E06B00E38FEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AEA3B2B-92C2-49CA-B28D-E06B00E38FEB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,8 +44,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{16691BC7-C6B3-4F04-819F-F6F56FA0067D} = {6127C084-F959-414F-8216-44CFD83548BD}
 		{A69F7B2F-5C97-406F-B78D-C20880024365} = {6127C084-F959-414F-8216-44CFD83548BD}
-		{40BB2F44-B11A-43F5-BF32-EB4ACF609E32} = {9BB24F6C-F539-469B-9529-EACC51AF3CF1}
 		{F7AA0BF0-96B5-4632-929C-E2D91A80CCE8} = {6127C084-F959-414F-8216-44CFD83548BD}
+		{3AEA3B2B-92C2-49CA-B28D-E06B00E38FEB} = {6127C084-F959-414F-8216-44CFD83548BD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1BDF4D1D-7FEA-4A47-A9FC-A8DCEFCFB46E}
