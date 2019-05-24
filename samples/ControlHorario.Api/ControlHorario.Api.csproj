@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\ControlHorario.Application\ControlHorario.Application.csproj" />
     <ProjectReference Include="..\..\src\ControlHorario.AzureTable.DataAccess\ControlHorario.AzureTable.DataAccess.csproj" />
     <ProjectReference Include="..\..\src\ControlHorario.Domain\ControlHorario.Domain.csproj" />
   </ItemGroup>

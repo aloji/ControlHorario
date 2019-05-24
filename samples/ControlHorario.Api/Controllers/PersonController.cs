@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using ControlHorario.Api.Mappers;
+using ControlHorario.Application.Services;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 
 namespace ControlHorario.Api.Controllers
 {
@@ -10,36 +11,40 @@ namespace ControlHorario.Api.Controllers
     [ApiController]
     public class PersonController : ControllerBase
     {
-        // GET api/values
-        [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        readonly IPersonAppService iPersonAppService;
+        readonly IPersonMapper iPersonMapper;
+        readonly IRecordMapper iRecordMapper;
+        public PersonController(IPersonAppService iPersonAppService,
+            IPersonMapper iPersonMapper, IRecordMapper iRecordMapper)
         {
-            return new string[] { "value1", "value2" };
+            this.iPersonAppService = iPersonAppService ??
+                throw new ArgumentNullException(nameof(iPersonAppService));
+            this.iPersonMapper = iPersonMapper ??
+                throw new ArgumentNullException(nameof(iPersonMapper));
+            this.iRecordMapper = iRecordMapper ??
+                throw new ArgumentNullException(nameof(iRecordMapper));
         }
 
-        // GET api/values/5
         [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        public async Task<IActionResult> GetAsync(Guid id)
         {
-            return "value";
+            var person = await this.iPersonAppService.GetByIdAsync(id);
+            if (person == null)
+                return this.NotFound();
+
+            var response = this.iPersonMapper.Convert(person);
+            return this.Ok(response);
         }
 
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpGet("{id}/records")]
+        public async Task<IActionResult> GetRecords(Guid id)
         {
-        }
+            var records = await this.iPersonAppService.GetRecordsAsync(id);
+            if (records == null || !records.Any())
+                return this.NotFound();
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            var response = records.Select(x => this.iRecordMapper.Convert(x));
+            return this.Ok(response);
         }
     }
 }
