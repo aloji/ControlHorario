@@ -18,13 +18,17 @@ namespace ControlHorario.AzureTable.DataAccess.Repositories
         readonly IAzureTable<PersonDb> azureTable;
         readonly IPersonMapper iPersonMapper;
 
-        public PersonRepository(IPersonMapper iPersonMapper, IOptions<AzureTableOptions> options)
+        public PersonRepository(IPersonMapper iPersonMapper, 
+            IOptionsMonitor<AzureTableOptions> options)
         {
             if (options == null)
                 throw new ArgumentNullException(nameof(options));
 
             this.iPersonMapper = iPersonMapper ?? throw new ArgumentNullException(nameof(iPersonMapper));
-            this.azureTable = new AzureTable<PersonDb>(options.Value.ConnectionString, options.Value.PersonTableName);
+
+            this.azureTable = new AzureTable<PersonDb>(
+                options.CurrentValue.ConnectionString, 
+                options.CurrentValue.PersonTableName);
         }
 
         public async Task CreateAsync(Person person)

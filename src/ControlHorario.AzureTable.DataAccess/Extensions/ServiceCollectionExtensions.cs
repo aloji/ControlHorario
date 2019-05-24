@@ -9,12 +9,13 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddControlHorarioAzureTable(this IServiceCollection services, 
-            Action<AzureTableOptions> options)
+            Action<AzureTableOptions> options = null)
         {
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
 
-            services.Configure<AzureTableOptions>(options);
+            if(options != null)
+                services.Configure<AzureTableOptions>(options);
 
             services.AddTransient<IPersonRepository, PersonRepository>();
             services.AddTransient<IRecordRepository, RecordRepository>();

@@ -16,15 +16,21 @@ namespace ControlHorario.AzureTable.DataAccess.Repositories
         readonly IRecordMapper iRecordMapper;
         readonly IAzureTable<PersonRecordDb> personRecordsTable;
         readonly IAzureTable<TimeRecordDb> timeRecordTable;
-        public RecordRepository(IRecordMapper iRecordMapper, IOptions<AzureTableOptions> options)
+        public RecordRepository(IRecordMapper iRecordMapper, 
+            IOptionsMonitor<AzureTableOptions> options)
         {
             if (options == null)
                 throw new ArgumentNullException(nameof(options));
 
             this.iRecordMapper = iRecordMapper ?? throw new ArgumentNullException(nameof(iRecordMapper));
 
-            this.personRecordsTable = new AzureTable<PersonRecordDb>(options.Value.ConnectionString, options.Value.RecordTableName);
-            this.timeRecordTable = new AzureTable<TimeRecordDb>(options.Value.ConnectionString, options.Value.RecordTableName);
+            this.personRecordsTable = new AzureTable<PersonRecordDb>(
+                options.CurrentValue.ConnectionString, 
+                options.CurrentValue.RecordTableName);
+
+            this.timeRecordTable = new AzureTable<TimeRecordDb>(
+                options.CurrentValue.ConnectionString, 
+                options.CurrentValue.RecordTableName);
         }
         public async Task CreateAsync(Record record)
         {
