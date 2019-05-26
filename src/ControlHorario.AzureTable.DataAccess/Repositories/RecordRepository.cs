@@ -14,8 +14,13 @@ namespace ControlHorario.AzureTable.DataAccess.Repositories
     public class RecordRepository : IRecordRepository
     {
         readonly IRecordMapper iRecordMapper;
-        readonly IAzureTable<PersonRecordDb> personRecordsTable;
-        readonly IAzureTable<TimeRecordDb> timeRecordTable;
+        readonly IAzureTable<RecordDb> recordsTable;
+        readonly Func<Record, string> getTimePartitionKey = x => x.DateTimeUtc.ToString("yyyyMMdd");
+        readonly Func<Record, string> getTimeRowKey = x => x.PersonId.ToString();
+        readonly Func<Record, string> getPersonPartitionKey = x => x.PersonId.ToString();
+        readonly Func<Record, string> getPersonRowKey = x => x.DateTimeUtc.Ticks.ToString();
+
+
         public RecordRepository(IRecordMapper iRecordMapper, 
             IOptionsMonitor<AzureTableOptions> options)
         {
@@ -24,27 +29,26 @@ namespace ControlHorario.AzureTable.DataAccess.Repositories
 
             this.iRecordMapper = iRecordMapper ?? throw new ArgumentNullException(nameof(iRecordMapper));
 
-            this.personRecordsTable = new AzureTable<PersonRecordDb>(
-                options.CurrentValue.ConnectionString, 
-                options.CurrentValue.RecordTableName);
-
-            this.timeRecordTable = new AzureTable<TimeRecordDb>(
+            this.recordsTable = new AzureTable<RecordDb>(
                 options.CurrentValue.ConnectionString, 
                 options.CurrentValue.RecordTableName);
         }
         public async Task CreateAsync(Record record)
         {
-            var timeRecord = new TimeRecordDb(record.PersonId, record.DateTimeUtc);
-            var personRecord = new PersonRecordDb(record.PersonId, record.DateTimeUtc);
+            var timeRecord = this.iRecordMapper.Convert(record,
+                getTimePartitionKey(record), getTimeRowKey(record));
 
-            await this.personRecordsTable.CreateAsync(personRecord);
-            await this.timeRecordTable.CreateAsync(timeRecord);
+            var personRecord = this.iRecordMapper.Convert(record,
+                getPersonPartitionKey(record), getPersonRowKey(record));
+
+            await this.recordsTable.CreateAsync(timeRecord);
+            await this.recordsTable.CreateAsync(personRecord);
         }
 
         public async Task<IEnumerable<Record>> GetAsync(Guid personId)
         {
             var result = default(IEnumerable<Record>);
-            var records = await this.personRecordsTable.GetAsync(personId.ToString());
+            var records = await this.recordsTable.GetAsync(personId.ToString());
             if (records != null)
             {
                 result = records.Select(x => this.iRecordMapper.Convert(x));

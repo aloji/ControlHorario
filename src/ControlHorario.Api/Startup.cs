@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ControlHorario.Application.Options;
 using ControlHorario.AzureTable.DataAccess.Options;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,9 +34,13 @@ namespace ControlHorario.Api
             services.Configure<AzureTableOptions>(
                 this.Configuration.GetSection("AzureTableOptions"));
 
+            services.Configure<FaceOptions>(
+                this.Configuration.GetSection("FaceOptions"));
+
             services
                 .AddControlHorarioApi()
                 .AddControlHorarioApp()
+                .AddControlHorarioDomain()
                 .AddControlHorarioAzureTable();
 
             services.AddMvc()

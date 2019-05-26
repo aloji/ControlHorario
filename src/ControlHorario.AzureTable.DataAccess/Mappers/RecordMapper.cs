@@ -5,7 +5,7 @@ namespace ControlHorario.AzureTable.DataAccess.Mappers
 {
     public class RecordMapper : IRecordMapper
     {
-        public Record Convert(IRecordDb source)
+        public Record Convert(RecordDb source)
         {
             var result = default(Record);
             if (source == null)
@@ -14,6 +14,22 @@ namespace ControlHorario.AzureTable.DataAccess.Mappers
                 {
                     DateTimeUtc = source.DateTimeUtc,
                     PersonId = source.PersonId
+                };
+            }
+            return result;
+        }
+
+        public RecordDb Convert(Record source, string partitionKey, string rowKey)
+        {
+            var result = default(RecordDb);
+            if (source != null)
+            {
+                result = new RecordDb
+                {
+                    PersonId = source.PersonId,
+                    DateTimeUtc = source.DateTimeUtc,
+                    PartitionKey = partitionKey,
+                    RowKey = rowKey
                 };
             }
             return result;

@@ -10,7 +10,8 @@ namespace ControlHorario.Domain.Repositories
         Task CreateAsync(Person person);
         Task UpdateAsync(Person person);
         Task DeleteAsync(Guid id);
-        Task<Person> GetAsync(Guid id);
+        Task<Person> GetByIdAsync(Guid id);
+        Task<Person> GetByFacePersonId(Guid facePersonId);
         Task<IEnumerable<Person>> GetAsync();
     }
 }

@@ -5,7 +5,9 @@ namespace ControlHorario.AzureTable.DataAccess.Mappers
 {
     public interface IPersonMapper
     {
-        PersonDb Convert(Person source, string partitionKey);
+        PersonDb Convert(Person source,
+           string partitionKey,
+           string rowKey);
         Person Convert(PersonDb source);
     }
 }

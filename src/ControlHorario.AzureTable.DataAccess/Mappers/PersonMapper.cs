@@ -5,14 +5,20 @@ namespace ControlHorario.AzureTable.DataAccess.Mappers
 {
     public class PersonMapper : IPersonMapper
     {
-        public PersonDb Convert(Person source, string partitionKey)
+        public PersonDb Convert(Person source, 
+            string partitionKey,
+            string rowKey)
         {
             var result = default(PersonDb);
             if (source != null)
             {
-                result = new PersonDb(source.Id, partitionKey)
+                result = new PersonDb
                 {
+                    PartitionKey = partitionKey,
+                    RowKey = rowKey,
                     Name = source.Name,
+                    Id = source.Id,
+                    FacePersonId = source.FacePersonId
                 };
             }
             return result;
@@ -27,6 +33,7 @@ namespace ControlHorario.AzureTable.DataAccess.Mappers
                 {
                     Id = source.Id,
                     Name = source.Name,
+                    FacePersonId = source.FacePersonId
                 };
             }
             return result;

@@ -5,6 +5,9 @@ namespace ControlHorario.AzureTable.DataAccess.Mappers
 {
     public interface IRecordMapper
     {
-        Record Convert(IRecordDb source);
+        RecordDb Convert(Record source,
+           string partitionKey,
+           string rowKey);
+        Record Convert(RecordDb source);
     }
 }

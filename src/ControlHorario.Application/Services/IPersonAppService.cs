@@ -9,5 +9,7 @@ namespace ControlHorario.Application.Services
     {
         Task<Person> GetByIdAsync(Guid personId);
         Task<IEnumerable<Record>> GetRecordsAsync(Guid personId);
+        Task CreateAsync(Person person);
+        Task<Person> GetByFacePersonIdAsync(Guid facePersonId);
     }
 }
