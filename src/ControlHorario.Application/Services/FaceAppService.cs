@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace ControlHorario.Application.Services
@@ -43,13 +44,15 @@ namespace ControlHorario.Application.Services
             if (exitPersonGroup)
                 await Task.CompletedTask;
 
-            var personGroup = await this.Client.PersonGroup.GetAsync(
-                options.CurrentValue.PersonGroupId);
-
-            if (personGroup == null)
+            try
             {
-                await this.Client.PersonGroup.CreateAsync(options.CurrentValue.PersonGroupId,
-                                recognitionModel: RecognitionModel.Recognition02);
+                await this.Client.PersonGroup.CreateAsync(
+                    personGroupId: options.CurrentValue.PersonGroupId,
+                    name: options.CurrentValue.PersonGroupName,
+                    recognitionModel: RecognitionModel.Recognition02);
+            }
+            catch (APIErrorException ex) when (ex.Response.StatusCode == HttpStatusCode.Conflict)
+            {
             }
 
             exitPersonGroup = true;
