@@ -98,6 +98,7 @@ namespace ControlHorario.AzureTable.DataAccess.Repositories
             var personDb = this.iPersonMapper.Convert(person, 
                 personPartitionKey, 
                 person.Id.ToString());
+            personDb.ETag = "*";
 
             await this.azureTable.UpdateAsync(personDb);
 
@@ -106,6 +107,7 @@ namespace ControlHorario.AzureTable.DataAccess.Repositories
                 var personFaceDb = this.iPersonMapper.Convert(person,
                     facePartitionKey,
                     person.FacePersonId.ToString());
+                personFaceDb.ETag = "*";
 
                 await this.azureTable.InsertOrReplaceAsync(personFaceDb);
             }
