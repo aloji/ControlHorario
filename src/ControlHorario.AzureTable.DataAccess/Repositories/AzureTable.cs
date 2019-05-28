@@ -78,6 +78,13 @@ namespace ControlHorario.AzureTable.DataAccess.Repositories
         public async Task UpdateAsync(T item)
         {
             var table = await GetTableAsync();
+            var operation = TableOperation.Replace(item);
+            await table.ExecuteAsync(operation);
+        }
+
+        public async Task InsertOrReplaceAsync(T item)
+        {
+            var table = await GetTableAsync();
             var operation = TableOperation.InsertOrReplace(item);
             await table.ExecuteAsync(operation);
         }

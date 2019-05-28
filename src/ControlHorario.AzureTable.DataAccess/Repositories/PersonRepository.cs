@@ -107,7 +107,7 @@ namespace ControlHorario.AzureTable.DataAccess.Repositories
                     facePartitionKey,
                     person.FacePersonId.ToString());
 
-                await this.azureTable.UpdateAsync(personFaceDb);
+                await this.azureTable.InsertOrReplaceAsync(personFaceDb);
             }
         }
     }

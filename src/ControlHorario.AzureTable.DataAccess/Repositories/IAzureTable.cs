@@ -11,5 +11,6 @@ namespace ControlHorario.AzureTable.DataAccess.Repositories
         Task<IEnumerable<T>> GetAsync(string partitionKey);
         Task CreateAsync(T item);
         Task UpdateAsync(T item);
+        Task InsertOrReplaceAsync(T item);
     }
 }

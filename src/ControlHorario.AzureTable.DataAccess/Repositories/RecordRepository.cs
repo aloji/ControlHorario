@@ -20,7 +20,6 @@ namespace ControlHorario.AzureTable.DataAccess.Repositories
         readonly Func<Record, string> getPersonPartitionKey = x => x.PersonId.ToString();
         readonly Func<Record, string> getPersonRowKey = x => x.DateTimeUtc.Ticks.ToString();
 
-
         public RecordRepository(IRecordMapper iRecordMapper, 
             IOptionsMonitor<AzureTableOptions> options)
         {
