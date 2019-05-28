@@ -44,6 +44,17 @@ namespace ControlHorario.Api.Controllers
             return this.Ok(response);
         }
 
+        [HttpGet("")]
+        public async Task<IActionResult> GetAsync()
+        {
+            var persons = await this.iPersonAppService.GetAsync();
+            if (persons == null || !persons.Any())
+                return this.NotFound();
+
+            var response = persons.Select(x => this.iPersonMapper.Convert(x));
+            return this.Ok(response);
+        }
+
         [HttpPost]
         public async Task<IActionResult> PostAsync(PersonRequest request)
         {
