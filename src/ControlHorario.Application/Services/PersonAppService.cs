@@ -49,5 +49,10 @@ namespace ControlHorario.Application.Services
             var result = await this.iPersonRepository.GetByFacePersonId(facePersonId);
             return result;
         }
+
+        public async Task UpdateAsync(Person person)
+        {
+            await this.iPersonRepository.UpdateAsync(person);
+        }
     }
 }

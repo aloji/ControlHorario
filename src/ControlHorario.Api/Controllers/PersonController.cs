@@ -1,8 +1,10 @@
-﻿using ControlHorario.Api.Mappers;
+﻿using ControlHorario.Api.Extensions;
+using ControlHorario.Api.Mappers;
 using ControlHorario.Api.Models.Request;
 using ControlHorario.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -69,16 +71,10 @@ namespace ControlHorario.Api.Controllers
         [HttpPost("identify")]
         public async Task<IActionResult> FaceIdentify([FromBody] string dataUrl)
         {
-            if (string.IsNullOrWhiteSpace(dataUrl))
-                return this.BadRequest(dataUrl);
+            byte[] data = dataUrl.FromDataUrl();
 
-            var decode = WebUtility.UrlDecode(dataUrl);
-            var split = decode.Split(',');
-            if (split.Length != 2)
-                return this.BadRequest(dataUrl);
-
-            var base64Data = split[1];
-            byte[] data = Convert.FromBase64String(base64Data);
+            if (data == default(byte[]))
+                return this.BadRequest();
 
             var facePersonId = await this.iFaceAppService.GetFacePersonId(data);
             if(facePersonId.HasValue)
@@ -92,6 +88,29 @@ namespace ControlHorario.Api.Controllers
             }
 
             return this.NotFound();
+        }
+
+        [HttpPost("{id}/face")]
+        public async Task<IActionResult> AddFace(Guid id, [FromBody] string dataUrl)
+        {
+            byte[] data = dataUrl.FromDataUrl();
+
+            if (data == default(byte[]))
+                return this.BadRequest();
+
+            var person = await this.iPersonAppService.GetByIdAsync(id);
+            if (person == null)
+                return this.NotFound();
+
+            if (!person.FacePersonId.HasValue)
+            {
+                person.FacePersonId = await this.iFaceAppService.CreateAsync(person);
+                await this.iPersonAppService.UpdateAsync(person);
+            }
+
+            await this.iFaceAppService.AddFaceAsync(person.FacePersonId.Value, data);
+
+            return this.Ok();
         }
     }
 }
