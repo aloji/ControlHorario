@@ -54,5 +54,11 @@ namespace ControlHorario.Application.Services
         {
             await this.iPersonRepository.UpdateAsync(person);
         }
+
+        public async Task<IEnumerable<Person>> GetAsync()
+        {
+            var result = await this.iPersonRepository.GetAsync();
+            return result;
+        }
     }
 }

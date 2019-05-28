@@ -12,5 +12,6 @@ namespace ControlHorario.Application.Services
         Task CreateAsync(Person person);
         Task<Person> GetByFacePersonIdAsync(Guid facePersonId);
         Task UpdateAsync(Person person);
+        Task<IEnumerable<Person>> GetAsync();
     }
 }
