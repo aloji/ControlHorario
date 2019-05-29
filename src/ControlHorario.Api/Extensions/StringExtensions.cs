@@ -20,5 +20,19 @@ namespace ControlHorario.Api.Extensions
             }
             return result;
         }
+
+        public static bool IsUrl(this string source)
+        {
+            var result = true;
+            try
+            {
+                new Uri(source);
+            }
+            catch
+            {
+                result = false;
+            }
+            return result;
+        }
     }
 }

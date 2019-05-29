@@ -79,16 +79,35 @@ namespace ControlHorario.Api.Controllers
             return this.Ok(response);
         }
 
-        [HttpPost("identify")]
-        public async Task<IActionResult> FaceIdentify([FromBody] string dataUrl)
+        [HttpPost("identifybydata")]
+        public async Task<IActionResult> FaceIdentifyByData([FromBody] string dataUrl)
         {
             byte[] data = dataUrl.FromDataUrl();
-
             if (data == default(byte[]))
                 return this.BadRequest();
 
-            var facePersonId = await this.iFaceAppService.GetFacePersonId(data);
-            if(facePersonId.HasValue)
+            var result = await this.FaceIdentify(
+                async () => await this.iFaceAppService.GetFacePersonId(data));
+
+            return result;
+        }
+
+        [HttpPost("identifybyurl")]
+        public async Task<IActionResult> FaceIdentifyByUrl([FromQuery] string url)
+        {
+            if (!url.IsUrl())
+                return this.BadRequest();
+
+            var result = await this.FaceIdentify(
+                async () => await this.iFaceAppService.GetFacePersonId(url));
+
+            return result;
+        }
+
+        private async Task<IActionResult> FaceIdentify(Func<Task<Guid?>> getFacePersonId)
+        {
+            var facePersonId = await getFacePersonId();
+            if (facePersonId.HasValue)
             {
                 var person = await this.iPersonAppService.GetByFacePersonIdAsync(facePersonId.Value);
                 if (person != null)
@@ -97,18 +116,36 @@ namespace ControlHorario.Api.Controllers
                     return this.Ok(response);
                 }
             }
-
             return this.NotFound();
         }
 
-        [HttpPost("{id}/face")]
-        public async Task<IActionResult> AddFace(Guid id, [FromBody] string dataUrl)
+        [HttpPost("{id}/facebydata")]
+        public async Task<IActionResult> AddFaceByData(Guid id, [FromBody] string dataUrl)
         {
             byte[] data = dataUrl.FromDataUrl();
-
             if (data == default(byte[]))
                 return this.BadRequest();
 
+            var result = await this.AddFace(id,
+                async (facePersonId) => await this.iFaceAppService.AddFaceAsync(facePersonId, data));
+
+            return result;
+        }
+
+        [HttpPost("{id}/facebyurl")]
+        public async Task<IActionResult> AddFaceByUrl(Guid id, [FromQuery] string url)
+        {
+            if (!url.IsUrl())
+                return this.BadRequest();
+
+            var result = await this.AddFace(id,
+                async (facePersonId) => await this.iFaceAppService.AddFaceAsync(facePersonId, url));
+
+            return result;
+        }
+
+        private async Task<IActionResult> AddFace(Guid id, Func<Guid, Task> addFace)
+        {
             var person = await this.iPersonAppService.GetByIdAsync(id);
             if (person == null)
                 return this.NotFound();
@@ -119,7 +156,7 @@ namespace ControlHorario.Api.Controllers
                 await this.iPersonAppService.UpdateAsync(person);
             }
 
-            await this.iFaceAppService.AddFaceAsync(person.FacePersonId.Value, data);
+            await addFace(person.FacePersonId.Value);
 
             return this.Ok();
         }

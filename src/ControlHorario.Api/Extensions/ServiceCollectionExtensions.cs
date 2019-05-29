@@ -1,4 +1,6 @@
-﻿using ControlHorario.Api.Mappers;
+﻿using ControlHorario.Api.Background;
+using ControlHorario.Api.Mappers;
+using Microsoft.Extensions.Hosting;
 using System;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -12,6 +14,8 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddSingleton<IPersonMapper, PersonMapper>();
             services.AddSingleton<IRecordMapper, RecordMapper>();
+
+            services.AddSingleton<IHostedService, TrainingTask>();
 
             return services;
         }

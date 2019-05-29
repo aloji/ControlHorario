@@ -93,14 +93,40 @@ namespace ControlHorario.Application.Services
             }
         }
 
+        public async Task AddFaceAsync(Guid facePersonId, string url)
+        {
+            var detectedFace = await DetectAsync(url);
+
+            if (detectedFace != null && detectedFace.FaceId.HasValue)
+            {
+                await this.Client.PersonGroupPerson.AddFaceFromUrlAsync(
+                    options.CurrentValue.PersonGroupId, facePersonId, url, null,
+                    new List<int> {
+                            detectedFace.FaceRectangle.Left,
+                            detectedFace.FaceRectangle.Top,
+                            detectedFace.FaceRectangle.Width,
+                            detectedFace.FaceRectangle.Height
+                    });
+            }
+        }
+
         public async Task<Guid?> GetFacePersonId(byte[] data)
         {
-            var result = default(Guid?);
-
-            if(data == null)
-                throw new ArgumentNullException(nameof(data));
-
             var detectedFace = await DetectAsync(data);
+            var result = await GetFacePersonId(detectedFace);
+            return result;
+        }
+
+        public async Task<Guid?> GetFacePersonId(string url)
+        {
+            var detectedFace = await DetectAsync(url);
+            var result = await GetFacePersonId(detectedFace);
+            return result;
+        }
+
+        private async Task<Guid?> GetFacePersonId(DetectedFace detectedFace)
+        {
+            var result = default(Guid?);
             if (detectedFace != null && detectedFace.FaceId.HasValue)
             {
                 var identificationResults = await this.Client.Face.IdentifyAsync(
@@ -136,6 +162,44 @@ namespace ControlHorario.Application.Services
                     result = detectedFaces.First();
                 }
             }
+            return result;
+        }
+
+        private async Task<DetectedFace> DetectAsync(string url)
+        {
+            var result = default(DetectedFace);
+            var detectedFaces = await this.Client.Face.DetectWithUrlAsync(url,
+                returnFaceId: true,
+                recognitionModel: RecognitionModel.Recognition02);
+
+            if (detectedFaces != null && detectedFaces.Any())
+            {
+                result = detectedFaces.First();
+            }
+            return result;
+        }
+
+        public async Task<bool> TrainAndWaitAsync()
+        {
+            var personGroupId = this.options.CurrentValue.PersonGroupId;
+            var millisecondsDelay = 1000;
+
+            await CreatePersonGroupIfNotExist();
+
+            await this.Client.PersonGroup.TrainAsync(personGroupId);
+
+            var trainingStatus = await this.Client.PersonGroup.GetTrainingStatusAsync(personGroupId);
+
+            while (trainingStatus?.Status != null
+                   && !trainingStatus.Status.Equals(TrainingStatusType.Succeeded)
+                   && !trainingStatus.Status.Equals(TrainingStatusType.Failed))
+            {
+                await Task.Delay(millisecondsDelay);
+
+                trainingStatus = await this.Client.PersonGroup.GetTrainingStatusAsync(personGroupId);
+            }
+
+            var result = trainingStatus.Status == TrainingStatusType.Succeeded;
             return result;
         }
     }
