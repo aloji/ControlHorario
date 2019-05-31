@@ -12,8 +12,10 @@ namespace ControlHorario.AzureTable.DataAccess.Mappers
             {
                 result = new Record
                 {
+                    Id = source.Id,
                     DateTimeUtc = source.DateTimeUtc,
-                    PersonId = source.PersonId
+                    PersonId = source.PersonId,
+                    IsStart = source.IsStart
                 };
             }
             return result;
@@ -26,8 +28,10 @@ namespace ControlHorario.AzureTable.DataAccess.Mappers
             {
                 result = new RecordDb
                 {
+                    Id = source.Id,
                     PersonId = source.PersonId,
                     DateTimeUtc = source.DateTimeUtc,
+                    IsStart = source.IsStart,
                     PartitionKey = partitionKey,
                     RowKey = rowKey
                 };

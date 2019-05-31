@@ -13,7 +13,9 @@ namespace ControlHorario.Api.Mappers
             var result = new RecordResponse
             {
                 DateTimeUtc = source.DateTimeUtc,
-                PersonId = source.PersonId
+                PersonId = source.PersonId,
+                IsStart = source.IsStart,
+                Id = source.Id
             };
             return result;
         }
