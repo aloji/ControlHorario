@@ -10,12 +10,15 @@ namespace ControlHorario.Api.Extensions
             var result = default(byte[]);
             if (!string.IsNullOrWhiteSpace(source))
             {
-                var decode = WebUtility.UrlDecode(source);
-                var split = decode.Split(',');
+                var split = source.Split(',');
                 if (split.Length == 2)
                 {
                     var base64Data = split[1];
-                    result = Convert.FromBase64String(base64Data);
+                    try
+                    {
+                        result = Convert.FromBase64String(base64Data);
+                    }
+                    catch { }
                 }
             }
             return result;
