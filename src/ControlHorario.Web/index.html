@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
     <title>Control de Horario</title>
 
@@ -21,106 +22,114 @@
 
   </head>
   <body>
-        <div class="container">
+        <div id="app" class="container">
             <div class="row p-5">
-                <div class="col-4">
-                    <div class="card">
-                        <div class="card-header">
-                            Login
-                        </div>
-                        <video id="video" class="card-img-top"></video>
-                        <canvas id="canvas">
-                        </canvas>
-                        <img id="photo" alt="The screen capture will appear in this box."> 
-                        <!--<div class="card-body">
-                            <h5 class="card-title"></h5>
-                            <p class="card-text"></p>
-                        </div>-->
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">
-                                <div class="row">
-                                    <div class="col">
-                                        <button type="button" class="btn btn-outline-primary active">Now</button>
-                                    </div>
-                                    <div class="col">
-                                        <button class="btn btn-outline-secondary" type="button" data-toggle="collapse" 
-                                            data-target="#collapse-custom-date" aria-expanded="false" aria-controls="collapse-custom-date">
-                                            Custom Date
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="w-100"></div>
-                                <div class="row">
-                                    <div class="collapse p-2 mx-auto" id="collapse-custom-date">
-                                        <input type="datetime-local" class="form-control">
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="list-group-item"><button type="button" id="startbutton" class="btn btn-success btn-lg btn-block">Entry</button></li>
-                            <li class="list-group-item"><button type="button" class="btn btn-danger btn-lg btn-block">Exit</button></li>
-                            <li class="list-group-item"><button type="button" class="btn btn-info btn-lg btn-block">Dashboard</button></li>
-                        </ul>
-                    </div>
+                <div class="col-12 col-lg-4">
+                    <login 
+                        v-bind:url="getAuthUrl()"/>
                 </div>
                 <div class="col">
                     <div class="row">
-                        <div class="col-4 col-sm-8">
-                            <dl class="row">
-                                <dt class="col-sm-2">Name</dt>
-                                <dd class="col-sm-10">Name</dd>
-                            </dl>
-                        </div>
+                        <person-data 
+                            v-bind:person="person"
+                        />
                     </div>
                     <div class="w-100"></div>
                     <div class="row">
-                        <div class="col p-3">
-                            <nav class="nav nav-pills">
-                                <a class="nav-link active" href="#">Today</a>
-                                <a class="nav-link" href="#">Yesterday</a>
-                                <a class="nav-link" href="#">This week</a>
-                                <a class="nav-link" href="#">This month</a>
-                                <a class="nav-link" href="#">All</a>
-                            </nav>
-                        </div>
-                        <div class="w-100"></div>
-                        <div class="col">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                    <th scope="col">Date</th>
-                                    <th scope="col">Entry</th>
-                                    <th scope="col">Exit</th>
-                                    <th scope="col">Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                    <th scope="row">29/05/2019</th>
-                                    <td>8:00</td>
-                                    <td>13:00</td>
-                                    <td>5h</td>
-                                    </tr>
-                                    <tr>
-                                    <th scope="row">29/05/2019</th>
-                                    <td>14:00</td>
-                                    <td>17:00</td>
-                                    <td>3h</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        <records-table
+                            v-bind:records="records"
+                        />
                     </div>
                 </div>
             </div>
         </div>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-        
-    <script src="js/app.js"></script>
 
+        <template id="login">
+            <div class="card">
+                <div class="card-header">
+                    Login
+                </div>
+                
+                <video id="video" ref="video" width="320" height autoplay class="card-img-top"></video>
+                <canvas ref="canvas" id="canvas" width="320" height></canvas>
+                
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col">
+                                <button type="button" class="btn btn-outline-primary active">Now</button>
+                            </div>
+                            <div class="col">
+                                <button class="btn btn-outline-secondary" type="button" data-toggle="collapse" 
+                                    data-target="#collapse-custom-date" aria-expanded="false" aria-controls="collapse-custom-date">
+                                    Custom Date
+                                </button>
+                            </div>
+                        </div>
+                        <div class="w-100"></div>
+                        <div class="row">
+                            <div class="collapse p-2 mx-auto" id="collapse-custom-date">
+                                <input type="datetime-local" class="form-control">
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item"><button type="button" class="loginbtn btn btn-success btn-lg btn-block" v-on:click="capture('start')">Start</button></li>
+                    <li class="list-group-item"><button type="button" class="loginbtn btn btn-danger btn-lg btn-block" v-on:click="capture('end')">End</button></li>
+                    <li class="list-group-item"><button type="button" class="loginbtn btn btn-info btn-lg btn-block" v-on:click="capture('dashboard')">Dashboard</button></li>
+                </ul>
+            </div>
+        </template>
+
+        <template id="person-data">
+            <h6 class="p-3">{{person.Name}}</h6>
+        </template>
+
+        <template id="records-table">
+            <div>
+                <div class="col p-3">
+                    <nav class="nav nav-pills">
+                        <a class="nav-link active" href="#">Today</a>
+                        <a class="nav-link" href="#">Yesterday</a>
+                        <a class="nav-link" href="#">This week</a>
+                        <a class="nav-link" href="#">This month</a>
+                        <a class="nav-link" href="#">All</a>
+                    </nav>
+                </div>
+                <div class="w-100"></div>
+                <div class="col">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Date</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr is="records-table-item"
+                                v-for="row in rows" 
+                                v-bind:record="row"
+                                v-bind:key="row.Id"></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </template>
+
+        <template id="records-table-item">
+            <tr>
+                <td>{{record.DateTimeUtc}}</td>
+                <td>
+                    <span v-if="record.IsStart" class="badge badge-success">Start</span>
+                    <span v-else class="badge badge-danger">End</span>
+                </td>
+            </tr>
+        </template>
+
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.min.js"></script> 
+        <script src="https://unpkg.com/axios@0.18.0/dist/axios.min.js"></script> 
+        <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script> 
+
+        <script src="js/vue-app.js"></script>
     </body>
 </html>
