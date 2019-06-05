@@ -4,7 +4,9 @@ Vue.component("login", {
     data() {
         return {
             video: {},
-            canvas: {}
+            canvas: {},
+            loggedIn: false,
+            isCustomDate: false
         }
     },
     mounted: function () {
@@ -20,19 +22,38 @@ Vue.component("login", {
     },
     methods: {
         capture() {
-            this.canvas = this.$refs.canvas;
-            const context = this.canvas.getContext("2d")
-                .drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
-            const capture = canvas.toDataURL("image/png");
+            const self = this;
 
-            const config = { headers: {'Content-Type': 'application/json'} };
-            axios.post(this.url, "\"" + capture + "\"", config)
-                .then(function (response) {
-                    console.info(response);
-                })
-                .catch(function (error) {
-                    console.error(error);
-                });
+            var loginRender = function(person){
+                self.loggedIn = true;
+                self.isCustomDate = false;
+                self.$emit("login", person);
+            }
+
+            var logoutRender = function(){
+                self.loggedIn = false;
+                self.isCustomDate = false;
+                self.$emit("logout");
+            }
+
+            if(this.loggedIn)
+                logoutRender();
+            else{
+                this.canvas = this.$refs.canvas;
+                const context = this.canvas.getContext("2d");
+                context.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
+                const capture = canvas.toDataURL("image/png");
+
+                const config = { headers: {'Content-Type': 'application/json'} };
+                axios.post(this.url, "\"" + capture + "\"", config)
+                    .then(function (response) {
+                        loginRender(response.data);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        logoutRender();
+                    });
+            }
         }
     }
 });
@@ -42,12 +63,20 @@ Vue.component("person-data", {
     props:['person']
 });
 
+Vue.component("alert", {
+    template: '#alert'
+});
+
 Vue.component("records-table", {
     template: '#records-table',
     props:['records'],
-    data: function() {
-        return {
-            rows: this.records
+    computed: {
+        Rows: function(){
+            const result = this.records.map(function(r) {
+                r['dateStr'] = new Date(r.dateTimeUtc).toLocaleString()
+                return r;
+            });
+            return result;
         }
     }
 });
@@ -68,26 +97,50 @@ var app = new Vue({
     methods: {
         getAuthUrl(){
             return this.url + 'api/Person/identifybydata'
+        },
+        getPersonUrl(){
+            return this.url + 'api/Person/'
+        },
+        onLogout(){
+            this.person = null;
+            this.records = null;
+        },
+        onLogin(token){
+            this.person = token;
+            this.getRecords(this.person.id)
+        },
+        onAddRecord(personId, date, isStart){
+            const self = this;
+            const api = self.getPersonUrl() + personId + '/record';
+            axios.post(api, new {
+                DateTimeUtc: date,
+                IsStart: isStart
+            })
+                .then(function (response) {
+                    self.records.push(response.data);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        },
+        getRecords(personId, from, to){
+            const self = this;
+            let api = self.getPersonUrl() + personId + '/record';
+            if(from && to)
+                api += "?from=" + from + "&to=" + to;
+            
+            axios.get(api)
+                .then(function (response) {
+                    self.records = response.data;
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    self.records = null;
+                });
         }
     },
     data: {
-        person: {
-            Id: 'Guid',
-            Name: 'Person Name'
-        },
-        records: [
-            {
-                Id: 'Guid-1',
-                PersonId: 'Guid-2',
-                DateTimeUtc: new Date(),
-                IsStart: true
-            },
-            {
-                Id: 'Guid-3',
-                PersonId: 'Guid-4',
-                DateTimeUtc: new Date(),
-                Type: false
-            },
-        ]
+        person: null,
+        records: null
     }
 });

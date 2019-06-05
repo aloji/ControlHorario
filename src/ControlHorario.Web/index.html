@@ -26,7 +26,9 @@
             <div class="row p-5">
                 <div class="col-12 col-lg-4">
                     <login 
-                        v-bind:url="getAuthUrl()"/>
+                        v-bind:url="getAuthUrl()"
+                        v-on:login="onLogin"
+                        v-on:logout="onLogout"/>
                 </div>
                 <div class="col">
                     <div class="row">
@@ -44,25 +46,40 @@
             </div>
         </div>
 
+        <template id="alert">
+            <div class="alert alert-danger" 
+                role="alert">
+                    This is a danger alert—check it out!
+            </div>
+        </template>
 
         <template id="login">
             <div class="card">
-                <div class="card-header">
-                    Login
-                </div>
-                
+                             
                 <video id="video" ref="video" width="320" height autoplay class="card-img-top"></video>
                 <canvas ref="canvas" id="canvas" width="320" height></canvas>
                 
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
+                        <button type="button" class="btn btn-lg btn-block"
+                             v-bind:class="[loggedIn ? 'btn-dark' : 'btn-info']"
+                             v-on:click="capture()">
+                            <span v-if="loggedIn">Log out</span>
+                            <span v-else>Login</span>
+                        </button>
+                    </li>
+                    <li class="list-group-item">
                         <div class="row">
                             <div class="col">
-                                <button type="button" class="btn btn-outline-primary active">Now</button>
+                                <button type="button" class="btn btn-outline-primary" 
+                                    v-bind:class="{'disabled': !loggedIn, 'active': !isCustomDate}">
+                                    Now
+                                </button>
                             </div>
                             <div class="col">
                                 <button class="btn btn-outline-secondary" type="button" data-toggle="collapse" 
-                                    data-target="#collapse-custom-date" aria-expanded="false" aria-controls="collapse-custom-date">
+                                    data-target="#collapse-custom-date" aria-expanded="false" aria-controls="collapse-custom-date"
+                                    v-bind:class="{'disabled': !loggedIn, 'active': isCustomDate}">
                                     Custom Date
                                 </button>
                             </div>
@@ -74,26 +91,27 @@
                             </div>
                         </div>
                     </li>
-                    <li class="list-group-item"><button type="button" class="loginbtn btn btn-success btn-lg btn-block" v-on:click="capture('start')">Start</button></li>
-                    <li class="list-group-item"><button type="button" class="loginbtn btn btn-danger btn-lg btn-block" v-on:click="capture('end')">End</button></li>
-                    <li class="list-group-item"><button type="button" class="loginbtn btn btn-info btn-lg btn-block" v-on:click="capture('dashboard')">Dashboard</button></li>
+                    <li class="list-group-item"><button type="button" class="btn btn-success btn-lg btn-block"
+                        v-bind:class="{'disabled': !loggedIn}">Start</button></li>
+                    <li class="list-group-item"><button type="button" class="btn btn-danger btn-lg btn-block"
+                        v-bind:class="{'disabled': !loggedIn}">End</button></li>
                 </ul>
             </div>
         </template>
 
         <template id="person-data">
-            <h6 class="p-3">{{person.Name}}</h6>
+            <h6 v-if=person class="p-3">{{person.name}}</h6>
         </template>
 
         <template id="records-table">
-            <div>
+            <div v-if=records>
                 <div class="col p-3">
                     <nav class="nav nav-pills">
                         <a class="nav-link active" href="#">Today</a>
                         <a class="nav-link" href="#">Yesterday</a>
                         <a class="nav-link" href="#">This week</a>
                         <a class="nav-link" href="#">This month</a>
-                        <a class="nav-link" href="#">All</a>
+                        <a class="nav-link" href="#">Prev month</a>
                     </nav>
                 </div>
                 <div class="w-100"></div>
@@ -107,9 +125,9 @@
                         </thead>
                         <tbody>
                             <tr is="records-table-item"
-                                v-for="row in rows" 
+                                v-for="row in Rows" 
                                 v-bind:record="row"
-                                v-bind:key="row.Id"></tr>
+                                v-bind:key="row.id"></tr>
                         </tbody>
                     </table>
                 </div>
@@ -118,9 +136,9 @@
 
         <template id="records-table-item">
             <tr>
-                <td>{{record.DateTimeUtc}}</td>
+                <td>{{record.dateStr}}</td>
                 <td>
-                    <span v-if="record.IsStart" class="badge badge-success">Start</span>
+                    <span v-if="record.isStart" class="badge badge-success">Start</span>
                     <span v-else class="badge badge-danger">End</span>
                 </td>
             </tr>
