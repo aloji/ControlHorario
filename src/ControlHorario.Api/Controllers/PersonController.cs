@@ -85,7 +85,7 @@ namespace ControlHorario.Api.Controllers
         }
 
         [HttpPost("{id}/record")]
-        public async Task<IActionResult> PostRecordAsyn(Guid id, [FromBody] RecordRequest request)
+        public async Task<IActionResult> PostRecordAsync(Guid id, [FromBody] RecordRequest request)
         {
             if (request == null)
                 return this.BadRequest();
