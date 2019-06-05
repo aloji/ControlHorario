@@ -8,7 +8,7 @@ namespace ControlHorario.AzureTable.DataAccess.Mappers
         public Record Convert(RecordDb source)
         {
             var result = default(Record);
-            if (source == null)
+            if (source != null)
             {
                 result = new Record
                 {
