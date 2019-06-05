@@ -19,6 +19,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 services.Configure<FaceOptions>(options);
 
             services.AddTransient<IPersonAppService, PersonAppService>();
+            services.AddTransient<IRecordAppService, RecordAppService>();
             services.AddSingleton<IFaceAppService, FaceAppService>();
 
             services.AddTransient<IEventHandler<PersonCreatedEvent>, CreatePersonInFaceWhenPersonCreatedHandler>();

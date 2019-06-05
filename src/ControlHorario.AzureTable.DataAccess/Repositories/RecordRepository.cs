@@ -15,9 +15,11 @@ namespace ControlHorario.AzureTable.DataAccess.Repositories
     {
         readonly IRecordMapper iRecordMapper;
         readonly IAzureTable<RecordDb> recordsTable;
-        readonly Func<Record, string> getTimePartitionKey = x => x.DateTimeUtc.ToString("yyyyMMdd");
-        readonly Func<Record, string> getRowKey = x => x.Id.ToString();
-        readonly Func<Record, string> getPersonPartitionKey = x => x.PersonId.ToString();
+
+        readonly static Func<DateTime, string> toStringTimePK = x => x.ToString("yyyyMMdd");
+        readonly static Func<Record, string> getTimePartitionKey = x => toStringTimePK(x.DateTimeUtc);
+        readonly static Func<Record, string> getRowKey = x => x.Id.ToString();
+        readonly static Func<Record, string> getPersonPartitionKey = x => x.PersonId.ToString();
 
         public RecordRepository(IRecordMapper iRecordMapper, 
             IOptionsMonitor<AzureTableOptions> options)
@@ -47,6 +49,18 @@ namespace ControlHorario.AzureTable.DataAccess.Repositories
         {
             var result = default(IEnumerable<Record>);
             var records = await this.recordsTable.GetAsync(personId.ToString());
+            if (records != null)
+            {
+                result = records.Select(x => this.iRecordMapper.Convert(x));
+            }
+            return result;
+        }
+
+        public async Task<IEnumerable<Record>> GetAsync(DateTime date)
+        {
+            var result = default(IEnumerable<Record>);
+            var pk = toStringTimePK(date);
+            var records = await this.recordsTable.GetAsync(pk);
             if (records != null)
             {
                 result = records.Select(x => this.iRecordMapper.Convert(x));

@@ -4,9 +4,7 @@ using ControlHorario.Api.Models.Request;
 using ControlHorario.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace ControlHorario.Api.Controllers
@@ -16,15 +14,19 @@ namespace ControlHorario.Api.Controllers
     public class PersonController : ControllerBase
     {
         readonly IPersonAppService iPersonAppService;
+        readonly IRecordAppService iRecordAppService;
         readonly IFaceAppService iFaceAppService;
         readonly IPersonMapper iPersonMapper;
         readonly IRecordMapper iRecordMapper;
         public PersonController(IPersonAppService iPersonAppService,
+            IRecordAppService iRecordAppService,
             IFaceAppService iFaceAppService,
             IPersonMapper iPersonMapper, IRecordMapper iRecordMapper)
         {
             this.iPersonAppService = iPersonAppService ??
                 throw new ArgumentNullException(nameof(iPersonAppService));
+            this.iRecordAppService = iRecordAppService ??
+               throw new ArgumentNullException(nameof(iRecordAppService));
             this.iFaceAppService = iFaceAppService ??
                 throw new ArgumentNullException(nameof(iFaceAppService));
             this.iPersonMapper = iPersonMapper ??
@@ -68,15 +70,37 @@ namespace ControlHorario.Api.Controllers
             return this.CreatedAtRoute(RouteNames.PersonGetById, response.Id, response);
         }
 
-        [HttpGet("{id}/records")]
-        public async Task<IActionResult> GetRecords(Guid id)
+        [HttpGet("{id}/record")]
+        public async Task<IActionResult> GetRecordAsync(Guid id, [FromQuery] DateTime? from, [FromQuery] DateTime? to)
         {
-            var records = await this.iPersonAppService.GetRecordsAsync(id);
+            var records = from.HasValue && to.HasValue 
+                ? await this.iRecordAppService.GetAsync(id, from.Value, to.Value) 
+                : await this.iRecordAppService.GetAsync(id);
+
             if (records == null || !records.Any())
                 return this.NotFound();
 
             var response = records.Select(x => this.iRecordMapper.Convert(x));
             return this.Ok(response);
+        }
+
+        [HttpPost("{id}/record")]
+        public async Task<IActionResult> PostRecordAsyn(Guid id, [FromBody] RecordRequest request)
+        {
+            if (request == null)
+                return this.BadRequest();
+
+            var record = this.iRecordMapper.Convert(request, id);
+            try
+            {
+                await this.iRecordAppService.CreateAsync(record);
+            }
+            catch(ArgumentOutOfRangeException)
+            {
+                return this.BadRequest();
+            }
+            var response = this.iRecordMapper.Convert(record);
+            return this.CreatedAtRoute("", response);
         }
 
         [HttpPost("identifybydata")]
