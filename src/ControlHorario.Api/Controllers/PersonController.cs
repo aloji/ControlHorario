@@ -67,7 +67,7 @@ namespace ControlHorario.Api.Controllers
             await this.iPersonAppService.CreateAsync(person);
 
             var response = this.iPersonMapper.Convert(person);
-            return this.CreatedAtRoute(RouteNames.PersonGetById, response.Id, response);
+            return this.CreatedAtRoute(RouteNames.PersonGetById, new { id = response.Id }, response);
         }
 
         [HttpGet("{id}/record")]
