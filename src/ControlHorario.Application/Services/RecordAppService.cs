@@ -21,20 +21,23 @@ namespace ControlHorario.Application.Services
         public async Task<IEnumerable<Record>> GetAsync(Guid personId)
         {
             var result = await this.iRecordRepository.GetAsync(personId);
+            if (result != null)
+                return result.OrderByDescending(x => x.DateTimeUtc);
             return result;
         }
 
         public async Task<IEnumerable<Record>> GetAsync(DateTime from, DateTime to)
         {
-            var result = new List<Record>();
+            var records = new List<Record>();
             foreach (var day in from.EachDay(to))
             {
                 var dayRecords = await this.iRecordRepository.GetAsync(day);
                 if (dayRecords != null && dayRecords.Any())
                 {
-                    result.AddRange(dayRecords);
+                    records.AddRange(dayRecords);
                 }
             }
+            var result = records.OrderByDescending(x => x.DateTimeUtc);
             return result;
         }
 
