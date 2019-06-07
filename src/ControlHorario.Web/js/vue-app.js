@@ -54,6 +54,16 @@ Vue.component("login", {
                         logoutRender();
                     });
             }
+        },
+        addRecordClick(isStart){
+            if(!this.loggedIn)
+                return;
+         
+            const record = {
+                date: new Date(),
+                isStart  
+            };
+            this.$emit("addrecord", record);
         }
     }
 });
@@ -70,13 +80,45 @@ Vue.component("alert", {
 Vue.component("records-table", {
     template: '#records-table',
     props:['records'],
+    data(){
+        return{
+            isValid: true,
+            periodType: 'today'
+        }
+    }, 
     computed: {
         Rows: function(){
-            const result = this.records.map(function(r) {
-                r['dateStr'] = new Date(r.dateTimeUtc).toLocaleString()
-                return r;
+            var self = this;
+            let isStart = true;
+            const result = this.records.map(function(item, index) {
+                item['dateStr'] = new Date(item.dateTimeUtc).toLocaleString()
+                item['isOk'] = item.isStart === isStart;
+
+                if(item['isOk'])
+                    isStart = !isStart;
+                else
+                    self.isValid = false;
+
+                if(index + 1 == self.records.length
+                    && item.isStart === true)
+                {
+                    self.isValid = false;
+                    item['isOk'] = false;
+                }
+
+                return item;
             });
             return result;
+        }
+    },
+    methods: {
+        getRecords(period){
+            if(!period)
+                return;
+            this.periodType = period;
+            this.$emit("loadrecords", {
+                periodType: period
+            });
         }
     }
 });
@@ -107,27 +149,64 @@ var app = new Vue({
         },
         onLogin(token){
             this.person = token;
-            this.getRecords(this.person.id)
+
+            this.onGetRecords({
+                periodType: "today"
+            })
         },
-        onAddRecord(personId, date, isStart){
+        onAddRecord(record){
+            if(!record)
+                return;
+
             const self = this;
+            const personId =  record.personId || self.person.id;
             const api = self.getPersonUrl() + personId + '/record';
-            axios.post(api, new {
-                DateTimeUtc: date,
-                IsStart: isStart
+            
+            axios.post(api, {
+                DateTimeUtc: record.date.toISOString(),
+                IsStart: record.isStart
             })
                 .then(function (response) {
-                    self.records.push(response.data);
+                    const records = self.records;
+                    records.push(response.data);
+                    self.records = records.sort(function(a,b){ 
+                        if(a.dateTimeUtc > b.dateTimeUtc)
+                            return 1;
+                        else if(a.dateTimeUtc < b.dateTimeUtc)
+                            return -1;
+                        else if(a.isStart)
+                            return 1;
+                        return 0;
+                    });
                 })
                 .catch(function (error) {
                     console.log(error);
                 });
         },
-        getRecords(personId, from, to){
+        onGetRecords(filter){
+            if(!filter)
+                return;
+
+            const date = new Date();
+            let from = null;
+            let to = null;
+
+            switch(filter.periodType){
+                case "today":
+                    from = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+                    to = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59);
+                    break;
+                case "yesterday":
+                    date.setDate(date.getDate()-1);
+                    from = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+                    to = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59);
+                    break;
+            }
+
             const self = this;
-            let api = self.getPersonUrl() + personId + '/record';
+            let api = self.getPersonUrl() + self.person.id + '/record';
             if(from && to)
-                api += "?from=" + from + "&to=" + to;
+                api += "?from=" + from.toISOString() + "&to=" + to.toISOString();
             
             axios.get(api)
                 .then(function (response) {

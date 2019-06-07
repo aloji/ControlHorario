@@ -18,6 +18,10 @@
         #photo {
             display:none;
         }
+        .icon {
+            width: 16px;
+            height: 16px;
+        }
     </style>
 
   </head>
@@ -28,9 +32,10 @@
                     <login 
                         v-bind:url="getAuthUrl()"
                         v-on:login="onLogin"
-                        v-on:logout="onLogout"/>
+                        v-on:logout="onLogout"
+                        v-on:addrecord="onAddRecord"/>
                 </div>
-                <div class="col">
+                <div class="col" v-if="person">
                     <div class="row">
                         <person-data 
                             v-bind:person="person"
@@ -40,6 +45,7 @@
                     <div class="row">
                         <records-table
                             v-bind:records="records"
+                            v-on:loadrecords="onGetRecords"
                         />
                     </div>
                 </div>
@@ -68,6 +74,7 @@
                             <span v-else>Login</span>
                         </button>
                     </li>
+                    <!--
                     <li class="list-group-item">
                         <div class="row">
                             <div class="col">
@@ -90,11 +97,21 @@
                                 <input type="datetime-local" class="form-control">
                             </div>
                         </div>
+                    </li>-->
+                    <li class="list-group-item">
+                        <button type="button" class="btn btn-success btn-lg btn-block"
+                            v-bind:class="{'disabled': !loggedIn}"
+                            v-on:click="addRecordClick(true)">
+                            Start
+                        </button>
                     </li>
-                    <li class="list-group-item"><button type="button" class="btn btn-success btn-lg btn-block"
-                        v-bind:class="{'disabled': !loggedIn}">Start</button></li>
-                    <li class="list-group-item"><button type="button" class="btn btn-danger btn-lg btn-block"
-                        v-bind:class="{'disabled': !loggedIn}">End</button></li>
+                    <li class="list-group-item">
+                        <button type="button" class="btn btn-danger btn-lg btn-block"
+                            v-bind:class="{'disabled': !loggedIn}"
+                            v-on:click="addRecordClick(false)">
+                            End
+                        </button>
+                    </li>
                 </ul>
             </div>
         </template>
@@ -104,23 +121,25 @@
         </template>
 
         <template id="records-table">
-            <div v-if=records>
+            <div class="col">
                 <div class="col p-3">
                     <nav class="nav nav-pills">
-                        <a class="nav-link active" href="#">Today</a>
-                        <a class="nav-link" href="#">Yesterday</a>
-                        <a class="nav-link" href="#">This week</a>
-                        <a class="nav-link" href="#">This month</a>
-                        <a class="nav-link" href="#">Prev month</a>
+                        <a class="nav-link" href="#"
+                            v-bind:class="{'active': periodType === 'today'}"
+                            v-on:click="getRecords('today')">Today</a>
+                        <a class="nav-link" href="#" 
+                            v-bind:class="{'active': periodType === 'yesterday'}"
+                            v-on:click="getRecords('yesterday')">Yesterday</a>
                     </nav>
                 </div>
                 <div class="w-100"></div>
-                <div class="col">
+                <div class="col" v-if=records>
                     <table class="table">
-                        <thead>
+                        <thead class="thead-light">
                             <tr>
                                 <th scope="col">Date</th>
                                 <th scope="col">Action</th>
+                                <!--<th scope="col"></th>-->
                             </tr>
                         </thead>
                         <tbody>
@@ -135,12 +154,17 @@
         </template>
 
         <template id="records-table-item">
-            <tr>
+            <tr v-bind:class="{'table-warning': !record.isOk}">
                 <td>{{record.dateStr}}</td>
                 <td>
                     <span v-if="record.isStart" class="badge badge-success">Start</span>
                     <span v-else class="badge badge-danger">End</span>
                 </td>
+                <!--<td>
+                    <button class="btn btn-default">
+                        <img src="img/icon/trash.svg" alt="delete" class="icon">
+                    </button>
+                </td>-->
             </tr>
         </template>
 
