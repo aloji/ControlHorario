@@ -22,7 +22,7 @@ namespace ControlHorario.Application.Services
         {
             var result = await this.iRecordRepository.GetAsync(personId);
             if (result != null)
-                return result.OrderByDescending(x => x.DateTimeUtc);
+                return result.OrderBy(x => x.DateTimeUtc);
             return result;
         }
 
@@ -37,7 +37,7 @@ namespace ControlHorario.Application.Services
                     records.AddRange(dayRecords);
                 }
             }
-            var result = records.OrderByDescending(x => x.DateTimeUtc);
+            var result = records.OrderBy(x => x.DateTimeUtc);
             return result;
         }
 
