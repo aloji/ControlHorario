@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+            integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+        <title>Admin | Control de Horario</title>
+    </head>
+    <body>
+        <div id="app" class="container">
+            <div v-if='IsLogin === true'>
+                <navbar></navbar>
+                <main>
+                    <employees></employees>
+                </main>
+            </div>
+            <div v-if='IsLogin === false'>
+                <login></login>
+            </div>
+        </div>
+
+        <template id="login">
+            <div class="form-inline">
+                <div class="form-group mx-sm-3 mb-2">
+                    <label for="inputPassword2" class="sr-only">Password</label>
+                    <input type="password" class="form-control" id="inputPassword2" placeholder="Password">
+                </div>
+                <button class="btn btn-primary mb-2" 
+                    v-on:click="onLogin">Login</button>
+            </div>
+        </template>
+
+        <template id="employees">
+            <div>
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Employees</h1>
+                </div>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Faces</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr is="employees-table-item"></tr>
+                    </tbody>
+                    </table>                
+            </div>
+        </template>
+
+        <template id="employees-table-item">
+            <tr>
+                <td>Aloji</td>
+                <td>true</td>
+            </tr>
+        </template>
+
+        <template id="navbar">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="#">Dashboard <span class="sr-only"></span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Employees</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Reports</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </template>
+
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.min.js"></script> 
+        <script src="https://unpkg.com/axios@0.18.0/dist/axios.min.js"></script> 
+        <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script> 
+
+        <script src="js/dashboard.js"></script>
+    </body>
+</html>

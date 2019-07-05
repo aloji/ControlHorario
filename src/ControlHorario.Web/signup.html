@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>Sign Up</title>
+
+  </head>
+  <body>
+        <div id="app" class="container">
+            <div class="row p-5" v-if=person>
+                <div class="col">
+                    <div class="row">
+                        <person-data 
+                            v-bind:person="person"
+                        />
+                    </div>
+                    <div class="row">
+                        <capture 
+                            v-bind:url="getAddFaceUrl()"
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <template id="person-data">
+            <h6  class="p-3">{{person.name}}</h6>
+        </template>
+
+        <template id="capture">
+            <div class="card-deck">
+                <div class="card">
+                    <video id="video" ref="video" width="320" height autoplay></video>
+                    <div class="card-body">
+                        <button type="button" class="btn btn-lg btn-block btn-info"
+                            v-on:click="capture()">
+                            Take
+                        </button>
+                    </div>
+                </div>
+                <div class="card">
+                    <canvas ref="canvas" id="canvas" width="320" height></canvas>
+                    <div class="card-body">
+                        <button  v-if=taked type="button" class="btn btn-lg btn-block btn-info"
+                            v-on:click="upload()">
+                            Upload
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.min.js"></script> 
+        <script src="https://unpkg.com/vue-router@3.0.6/dist/vue-router.min.js"></script> 
+        <script src="https://unpkg.com/axios@0.18.0/dist/axios.min.js"></script> 
+        <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script> 
+
+        <script src="js/signup.js"></script>
+    </body>
+</html>
