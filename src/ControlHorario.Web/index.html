@@ -74,30 +74,32 @@
                             <span v-else>Login</span>
                         </button>
                     </li>
-                    <!--
                     <li class="list-group-item">
                         <div class="row">
                             <div class="col">
                                 <button type="button" class="btn btn-outline-primary" 
-                                    v-bind:class="{'disabled': !loggedIn, 'active': !isCustomDate}">
+                                    v-bind:class="{'disabled': !loggedIn, 'active': !isCustomDate}"
+                                    v-on:click="isCustomDate=false">
                                     Now
                                 </button>
                             </div>
                             <div class="col">
                                 <button class="btn btn-outline-secondary" type="button" data-toggle="collapse" 
-                                    data-target="#collapse-custom-date" aria-expanded="false" aria-controls="collapse-custom-date"
-                                    v-bind:class="{'disabled': !loggedIn, 'active': isCustomDate}">
+                                    aria-expanded="false" aria-controls="collapse-custom-date"
+                                    v-bind:class="{'disabled': !loggedIn, 'active': isCustomDate}"
+                                    v-on:click="isCustomDate=true">
                                     Custom Date
                                 </button>
                             </div>
                         </div>
                         <div class="w-100"></div>
                         <div class="row">
-                            <div class="collapse p-2 mx-auto" id="collapse-custom-date">
-                                <input type="datetime-local" class="form-control">
+                            <div class="p-2 mx-auto"
+                                v-bind:class="{'collapse': !isCustomDate}">
+                                <input type="datetime-local" class="form-control" v-model="recordTime">
                             </div>
                         </div>
-                    </li>-->
+                    </li>
                     <li class="list-group-item">
                         <button type="button" class="btn btn-success btn-lg btn-block"
                             v-bind:class="{'disabled': !loggedIn}"
@@ -135,13 +137,6 @@
                 <div class="w-100"></div>
                 <div class="col" v-if=records>
                     <table class="table">
-                        <thead class="thead-light">
-                            <tr>
-                                <th scope="col">Date</th>
-                                <th scope="col">Action</th>
-                                <!--<th scope="col"></th>-->
-                            </tr>
-                        </thead>
                         <tbody>
                             <tr is="records-table-item"
                                 v-for="row in Rows" 
@@ -160,11 +155,11 @@
                     <span v-if="record.isStart" class="badge badge-success">Start</span>
                     <span v-else class="badge badge-danger">End</span>
                 </td>
-                <!--<td>
-                    <button class="btn btn-default">
+                <td>
+                    <button v-if="record.canDelete" class="btn btn-default" v-on:click="delete(record)">
                         <img src="img/icon/trash.svg" alt="delete" class="icon">
                     </button>
-                </td>-->
+                </td>
             </tr>
         </template>
 

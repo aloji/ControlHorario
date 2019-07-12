@@ -6,7 +6,8 @@ Vue.component("login", {
             video: {},
             canvas: {},
             loggedIn: false,
-            isCustomDate: false
+            isCustomDate: false,
+            recordTime: new Date()
         }
     },
     mounted: function () {
@@ -57,10 +58,10 @@ Vue.component("login", {
         },
         addRecordClick(isStart){
             if(!this.loggedIn)
-                return;
-         
+                return;        
+            let date = this.isCustomDate ? new Date(this.recordTime) : new Date();
             const record = {
-                date: new Date(),
+                date,
                 isStart  
             };
             this.$emit("addrecord", record);
@@ -90,8 +91,12 @@ Vue.component("records-table", {
         Rows: function(){
             var self = this;
             let isStart = true;
+            const actualMonth = new Date().getMonth();
             const result = this.records.map(function(item, index) {
-                item['dateStr'] = new Date(item.dateTimeUtc).toLocaleString()
+
+                const recordDate = new Date(item.dateTimeUtc);
+                item['dateStr'] = recordDate.toLocaleString();
+                item["canDelete"] = recordDate.getMonth() === actualMonth;
                 item['isOk'] = item.isStart === isStart;
 
                 if(item['isOk'])
@@ -105,7 +110,6 @@ Vue.component("records-table", {
                     self.isValid = false;
                     item['isOk'] = false;
                 }
-
                 return item;
             });
             return result;
@@ -119,6 +123,9 @@ Vue.component("records-table", {
             this.$emit("loadrecords", {
                 periodType: period
             });
+        },
+        delete(record){
+
         }
     }
 });
@@ -167,9 +174,9 @@ var app = new Vue({
                 IsStart: record.isStart
             })
                 .then(function (response) {
-                    const records = self.records;
-                    records.push(response.data);
-                    self.records = records.sort(function(a,b){ 
+                    const r = self.records;
+                    r.push(response.data);
+                    self.records = r.sort(function(a,b){ 
                         if(a.dateTimeUtc > b.dateTimeUtc)
                             return 1;
                         else if(a.dateTimeUtc < b.dateTimeUtc)
@@ -220,6 +227,6 @@ var app = new Vue({
     },
     data: {
         person: null,
-        records: null
+        records: []
     }
 });
