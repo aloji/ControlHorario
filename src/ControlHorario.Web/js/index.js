@@ -80,11 +80,10 @@ Vue.component("alert", {
 
 Vue.component("records-table", {
     template: '#records-table',
-    props:['records'],
+    props:['records', 'period'],
     data(){
         return{
-            isValid: true,
-            periodType: 'today'
+            isValid: true
         }
     }, 
     computed: {
@@ -116,13 +115,10 @@ Vue.component("records-table", {
         }
     },
     methods: {
-        getRecords(period){
-            if(!period)
+        getRecords(periodType){
+            if(!periodType)
                 return;
-            this.periodType = period;
-            this.$emit("loadrecords", {
-                periodType: period
-            });
+            this.$emit("loadrecords", periodType);
         },
         delete(record){
 
@@ -152,14 +148,32 @@ var app = new Vue({
         },
         onLogout(){
             this.person = null;
-            this.records = null;
+            this.records = [];
+            this.periodType = null;
         },
         onLogin(token){
             this.person = token;
-
-            this.onGetRecords({
-                periodType: "today"
-            })
+            this.onGetRecords('today');
+        },
+        getFrom(period){
+            const date = new Date();
+            switch(period){
+                case "today":
+                    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+                case "yesterday":
+                    date.setDate(date.getDate()-1);
+                    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            }
+        },
+        getTo(period){
+            const date = new Date();
+            switch(period){
+                case "today":
+                    return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59);
+                case "yesterday":
+                    date.setDate(date.getDate()-1);
+                    return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59);
+            }
         },
         onAddRecord(record){
             if(!record)
@@ -174,43 +188,38 @@ var app = new Vue({
                 IsStart: record.isStart
             })
                 .then(function (response) {
-                    const r = self.records;
-                    r.push(response.data);
-                    self.records = r.sort(function(a,b){ 
-                        if(a.dateTimeUtc > b.dateTimeUtc)
-                            return 1;
-                        else if(a.dateTimeUtc < b.dateTimeUtc)
-                            return -1;
-                        else if(a.isStart)
-                            return 1;
-                        return 0;
-                    });
+                    const date = new Date(response.data.dateTimeUtc);
+                    if(self.getFrom(self.periodType) <= date
+                        && date <= self.getTo(self.periodType)){
+                        
+                        const r = self.records;
+                        r.push(response.data);
+                        self.records = r.sort(function(a,b){ 
+                            if(a.dateTimeUtc > b.dateTimeUtc)
+                                return 1;
+                            else if(a.dateTimeUtc < b.dateTimeUtc)
+                                return -1;
+                            else if(a.isStart)
+                                return 1;
+                            return 0;
+                        });
+                    }
                 })
                 .catch(function (error) {
                     console.log(error);
                 });
         },
-        onGetRecords(filter){
-            if(!filter)
+        onGetRecords(period){
+            if(!period || this.periodType === period)
                 return;
+            
+            this.periodType = period;
 
             const date = new Date();
-            let from = null;
-            let to = null;
-
-            switch(filter.periodType){
-                case "today":
-                    from = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-                    to = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59);
-                    break;
-                case "yesterday":
-                    date.setDate(date.getDate()-1);
-                    from = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-                    to = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59);
-                    break;
-            }
-
+            const from = this.getFrom(this.periodType);
+            const to = this.getTo(this.periodType);
             const self = this;
+
             let api = self.getPersonUrl() + self.person.id + '/record';
             if(from && to)
                 api += "?from=" + from.toISOString() + "&to=" + to.toISOString();
@@ -227,6 +236,7 @@ var app = new Vue({
     },
     data: {
         person: null,
-        records: []
+        records: [],
+        periodType: null
     }
 });

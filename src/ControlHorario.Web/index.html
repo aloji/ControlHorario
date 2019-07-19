@@ -45,6 +45,7 @@
                     <div class="row">
                         <records-table
                             v-bind:records="records"
+                            v-bind:period="periodType"
                             v-on:loadrecords="onGetRecords"
                         />
                     </div>
@@ -127,10 +128,10 @@
                 <div class="col p-3">
                     <nav class="nav nav-pills">
                         <a class="nav-link" href="#"
-                            v-bind:class="{'active': periodType === 'today'}"
+                            v-bind:class="{'active': period === 'today'}"
                             v-on:click="getRecords('today')">Today</a>
                         <a class="nav-link" href="#" 
-                            v-bind:class="{'active': periodType === 'yesterday'}"
+                            v-bind:class="{'active': period === 'yesterday'}"
                             v-on:click="getRecords('yesterday')">Yesterday</a>
                     </nav>
                 </div>
