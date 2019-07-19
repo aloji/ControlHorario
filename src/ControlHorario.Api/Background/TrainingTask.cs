@@ -24,10 +24,6 @@ namespace ControlHorario.Api.Background
                 {
                     await iFaceAppService.TrainAndWaitAsync();
                 }
-                catch (Exception)
-                {
-
-                }
                 finally
                 {
                     await Task.Delay(TimeSpan.FromMinutes(minsDelay), stoppingToken);

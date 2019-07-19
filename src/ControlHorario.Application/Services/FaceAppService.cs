@@ -60,8 +60,7 @@ namespace ControlHorario.Application.Services
 
         public async Task<Guid> CreateAsync(Domain.Entities.Person person)
         {
-            if (person == null)
-                throw new ArgumentNullException(nameof(person));
+            Validate();
 
             await CreatePersonGroupIfNotExist();
 
@@ -71,6 +70,12 @@ namespace ControlHorario.Application.Services
                 person.Id.ToString());
 
             return faceperson.PersonId;
+
+            void Validate()
+            {
+                if (person == null)
+                    throw new ArgumentNullException(nameof(person));
+            }
         }
 
         public async Task AddFaceAsync(Guid facePersonId, byte[] data)
@@ -199,7 +204,7 @@ namespace ControlHorario.Application.Services
                 trainingStatus = await this.Client.PersonGroup.GetTrainingStatusAsync(personGroupId);
             }
 
-            var result = trainingStatus.Status == TrainingStatusType.Succeeded;
+            var result = trainingStatus?.Status == TrainingStatusType.Succeeded;
             return result;
         }
     }

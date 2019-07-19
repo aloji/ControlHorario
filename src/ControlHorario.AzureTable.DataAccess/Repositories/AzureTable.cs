@@ -10,7 +10,7 @@ namespace ControlHorario.AzureTable.DataAccess.Repositories
         where T: TableEntity, new()
     {
 
-        CloudTable table;
+        CloudTable cloudTable;
         readonly string connectionString;
         readonly string tableName;
 
@@ -22,15 +22,15 @@ namespace ControlHorario.AzureTable.DataAccess.Repositories
 
         async Task<CloudTable> GetTableAsync()
         {
-            if (table == null)
+            if (cloudTable == null)
             {
                 var storageAccount = CloudStorageAccount.Parse(this.connectionString);
                 var tableClient = storageAccount.CreateCloudTableClient();
-                table = tableClient.GetTableReference(this.tableName);
+                cloudTable = tableClient.GetTableReference(this.tableName);
 
-                await table.CreateIfNotExistsAsync();
+                await cloudTable.CreateIfNotExistsAsync();
             }
-            return table;
+            return cloudTable;
         }
 
         public async Task CreateAsync(T item)
