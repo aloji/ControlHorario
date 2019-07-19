@@ -11,7 +11,7 @@ namespace ControlHorario.Application.Services
         Task<IEnumerable<Record>> GetAsync(Guid personId);
         Task<IEnumerable<Record>> GetAsync(DateTime from, DateTime to);
         Task<IEnumerable<Record>> GetAsync(Guid personId, DateTime from, DateTime to);
-        RecordValidation Validate(IEnumerable<Record> records);
         Task CreateAsync(Record record);
+        Task DeleteAsync(Guid personId, Guid recordId);
     }
 }

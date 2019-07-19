@@ -1,5 +1,4 @@
-﻿using ControlHorario.Application.Dto;
-using ControlHorario.Application.Extensions;
+﻿using ControlHorario.Application.Extensions;
 using ControlHorario.Domain.Entities;
 using ControlHorario.Domain.Repositories;
 using System;
@@ -50,34 +49,20 @@ namespace ControlHorario.Application.Services
 
         public async Task CreateAsync(Record record)
         {
-            if (record == null)
-                throw new ArgumentNullException(nameof(record));
+            Validate();
 
-            if (record.DateTimeUtc.Month > DateTime.UtcNow.Month)
-                throw new ArgumentOutOfRangeException();
+            await this.iRecordRepository.CreateAsync(record);
 
-           await this.iRecordRepository.CreateAsync(record);
+            void Validate()
+            {
+                if (record == null)
+                    throw new ArgumentNullException(nameof(record));
+            }
         }
 
-        public RecordValidation Validate(IEnumerable<Record> records)
+        public async Task DeleteAsync(Guid personId, Guid recordId)
         {
-            if (records == null || !records.Any())
-                throw new ArgumentNullException(nameof(records));
-
-            var result = new RecordValidation();
-            var order = records
-                .OrderByDescending(x => x.DateTimeUtc)
-                .ToArray();
-
-            bool isStart = true;
-            foreach (var item in order)
-            {
-                if (item.IsStart != isStart)
-                    result.BadRecords.Add(item);
-                else
-                    isStart = !isStart;
-            }
-            return result;
+            await this.iRecordRepository.DeleteAsync(personId, recordId);
         }
     }
 }

@@ -103,6 +103,13 @@ namespace ControlHorario.Api.Controllers
             return this.CreatedAtRoute("", response);
         }
 
+        [HttpDelete("{id}/record/recordId}")]
+        public async Task<IActionResult> DeleteRecordAsync(Guid id, Guid recordId)
+        {
+            await this.iRecordAppService.DeleteAsync(id, recordId);
+            return this.NoContent();
+        }
+
         [HttpPost("identifybydata")]
         public async Task<IActionResult> FaceIdentifyByData([FromBody] string dataUrl)
         {
