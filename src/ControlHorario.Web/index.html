@@ -44,9 +44,10 @@
                     <div class="w-100"></div>
                     <div class="row">
                         <records-table
-                            v-bind:records="records"
-                            v-bind:period="periodType"
-                            v-on:loadrecords="onGetRecords"
+                            v-bind:records="records" 
+                            v-bind:period="periodType" 
+                            v-on:loadrecords="onGetRecords" 
+                            v-on:removerecord="onRemoveRecord"
                         />
                     </div>
                 </div>
@@ -142,7 +143,8 @@
                             <tr is="records-table-item"
                                 v-for="row in Rows" 
                                 v-bind:record="row"
-                                v-bind:key="row.id"></tr>
+                                v-bind:key="row.id"
+                                v-on:delete="onDelete"></tr>
                         </tbody>
                     </table>
                 </div>
@@ -157,7 +159,7 @@
                     <span v-else class="badge badge-danger">End</span>
                 </td>
                 <td>
-                    <button v-if="record.canDelete" class="btn btn-default" v-on:click="delete(record)">
+                    <button v-if="record.canDelete" class="btn btn-default" v-on:click="$emit('delete', record)">
                         <img src="img/icon/trash.svg" alt="delete" class="icon">
                     </button>
                 </td>

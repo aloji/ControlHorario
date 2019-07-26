@@ -90,12 +90,14 @@ Vue.component("records-table", {
         Rows: function(){
             var self = this;
             let isStart = true;
-            const actualMonth = new Date().getMonth();
+            const dateNow = new Date();
             const result = this.records.map(function(item, index) {
 
                 const recordDate = new Date(item.dateTimeUtc);
                 item['dateStr'] = recordDate.toLocaleString();
-                item["canDelete"] = recordDate.getMonth() === actualMonth;
+                item["canDelete"] = recordDate.getMonth() === dateNow.getMonth() 
+                    && recordDate.getFullYear() >= dateNow.getFullYear();
+                    
                 item['isOk'] = item.isStart === isStart;
 
                 if(item['isOk'])
@@ -118,10 +120,10 @@ Vue.component("records-table", {
         getRecords(periodType){
             if(!periodType)
                 return;
-            this.$emit("loadrecords", periodType);
+            this.$emit("loadrecords", periodType);    
         },
-        delete(record){
-
+        onDelete(record){
+            this.$emit("removerecord", record);    
         }
     }
 });
@@ -174,6 +176,29 @@ var app = new Vue({
                     date.setDate(date.getDate()-1);
                     return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59);
             }
+        },
+        onRemoveRecord(record){
+            if(!record)
+                return;
+            
+            const self = this;
+            const personId =  record.personId || self.person.id;
+            const api = self.getPersonUrl() + personId + '/record/' + record.id;
+
+            axios.delete(api)
+                .then(function(){
+                    const date = new Date(record.dateTimeUtc);
+                    if(self.getFrom(self.periodType) <= date
+                        && date <= self.getTo(self.periodType))
+                    {
+                        const r = self.records;
+                        self.records = r.filter(el => el !== record);
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+
         },
         onAddRecord(record){
             if(!record)
