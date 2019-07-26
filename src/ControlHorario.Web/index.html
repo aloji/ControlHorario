@@ -134,6 +134,12 @@
                         <a class="nav-link" href="#" 
                             v-bind:class="{'active': period === 'yesterday'}"
                             v-on:click="getRecords('yesterday')">Yesterday</a>
+                        <a class="nav-link" href="#" 
+                            v-bind:class="{'active': period === 'thisweek'}"
+                            v-on:click="getRecords('thisweek')">This Week</a>
+                        <a class="nav-link" href="#" 
+                            v-bind:class="{'active': period === 'thismonth'}"
+                            v-on:click="getRecords('thismonth')">This Month</a>
                     </nav>
                 </div>
                 <div class="w-100"></div>

@@ -157,6 +157,11 @@ var app = new Vue({
             this.person = token;
             this.onGetRecords('today');
         },
+        getMonday(date) {
+            const day = date.getDay();
+            const diff = date.getDate() - day + (day == 0 ? -6:1);
+            return new Date(date.setDate(diff));
+        },
         getFrom(period){
             const date = new Date();
             switch(period){
@@ -165,6 +170,11 @@ var app = new Vue({
                 case "yesterday":
                     date.setDate(date.getDate()-1);
                     return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+                case "thisweek":
+                    const monday = this.getMonday(date);
+                    return new Date(monday.getFullYear(), monday.getMonth(), monday.getDate());
+                case "thismonth":
+                    return new Date(date.getFullYear(), date.getMonth(), 1);
             }
         },
         getTo(period){
@@ -175,6 +185,13 @@ var app = new Vue({
                 case "yesterday":
                     date.setDate(date.getDate()-1);
                     return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59);
+                case "thisweek":
+                    const monday = this.getMonday(date);
+                    var endWeek = new Date(monday.setDate(monday.getDate() + 6));
+                    return new Date(endWeek.getFullYear(), endWeek.getMonth(), endWeek.getDate(), 23, 59, 59);
+                case "thismonth":
+                    const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+                    return new Date(date.getFullYear(), date.getMonth(), lastDay, 23, 59, 59);
             }
         },
         onRemoveRecord(record){
