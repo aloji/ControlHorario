@@ -272,7 +272,7 @@ var app = new Vue({
                 })
                 .catch(function (error) {
                     console.log(error);
-                    self.records = null;
+                    self.records = [];
                 });
         }
     },
