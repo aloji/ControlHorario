@@ -17,6 +17,9 @@
             <div class="row p-5" v-if=person>
                 <div class="col">
                     <div class="row">
+                        <alert v-bind:error="log"/>
+                    </div>
+                    <div class="row">
                         <person-data 
                             v-bind:person="person"
                         />
@@ -24,6 +27,9 @@
                     <div class="row">
                         <capture 
                             v-bind:url="getAddFaceUrl()"
+                            v-on:showerror="onShowError"
+                            v-on:removealert="onRemoveAlert"
+                            v-on:showinfo="onShowInfo"
                         />
                     </div>
                 </div>
@@ -31,7 +37,14 @@
         </div>
 
         <template id="person-data">
-            <h6  class="p-3">{{person.name}}</h6>
+            <h6 class="p-3">{{person.name}}</h6>
+        </template>
+
+        <template id="alert">
+            <div v-if="error" class="alert" 
+                v-bind:class="classObject" role="alert">
+                   {{error.msg}}
+            </div>
         </template>
 
         <template id="capture">
