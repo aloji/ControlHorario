@@ -24,6 +24,7 @@ Vue.component("login", {
     methods: {
         capture() {
             const self = this;
+            self.$emit("removealert");
 
             var loginRender = function(person){
                 self.loggedIn = true;
@@ -45,6 +46,8 @@ Vue.component("login", {
                 context.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
                 const capture = canvas.toDataURL("image/png");
 
+                self.$emit("showinfo", "loading....");
+
                 const config = { headers: {'Content-Type': 'application/json'} };
                 axios.post(this.url, "\"" + capture + "\"", config)
                     .then(function (response) {
@@ -52,6 +55,10 @@ Vue.component("login", {
                     })
                     .catch(function (error) {
                         console.log(error);
+                        if(error.response.status === 404)
+                            self.$emit("showerror", "user not identified");
+                        else
+                            self.$emit("showerror", error);
                         logoutRender();
                     });
             }
@@ -75,7 +82,15 @@ Vue.component("person-data", {
 });
 
 Vue.component("alert", {
-    template: '#alert'
+    template: '#alert',
+    props: {
+        error: null
+    },
+    computed: {
+        classObject: function () {
+            return  "alert-" + this.error.level;
+        }
+    }
 });
 
 Vue.component("records-table", {
@@ -202,6 +217,8 @@ var app = new Vue({
             const personId =  record.personId || self.person.id;
             const api = self.getPersonUrl() + personId + '/record/' + record.id;
 
+            self.onRemoveAlert();
+
             axios.delete(api)
                 .then(function(){
                     const date = new Date(record.dateTimeUtc);
@@ -211,9 +228,11 @@ var app = new Vue({
                         const r = self.records;
                         self.records = r.filter(el => el !== record);
                     }
+                    self.onShowInfo("record deleted");
                 })
                 .catch(function (error) {
                     console.log(error);
+                    self.onShowError(error);
                 });
 
         },
@@ -225,6 +244,8 @@ var app = new Vue({
             const personId =  record.personId || self.person.id;
             const api = self.getPersonUrl() + personId + '/record';
             
+            self.onRemoveAlert();
+
             axios.post(api, {
                 DateTimeUtc: record.date.toISOString(),
                 IsStart: record.isStart
@@ -246,9 +267,11 @@ var app = new Vue({
                             return 0;
                         });
                     }
+                    self.onShowInfo("record added");
                 })
                 .catch(function (error) {
                     console.log(error);
+                    self.onShowError(error);
                 });
         },
         onGetRecords(period){
@@ -262,6 +285,8 @@ var app = new Vue({
             const to = this.getTo(this.periodType);
             const self = this;
 
+            self.onRemoveAlert();
+
             let api = self.getPersonUrl() + self.person.id + '/record';
             if(from && to)
                 api += "?from=" + from.toISOString() + "&to=" + to.toISOString();
@@ -274,11 +299,27 @@ var app = new Vue({
                     console.log(error);
                     self.records = [];
                 });
-        }
+        },
+        onShowError(msg){
+            this.log = {
+                level: "danger",
+                msg: msg
+            };
+        },
+        onShowInfo(msg){
+            this.log = {
+                level: "info",
+                msg: msg
+            };
+        },
+        onRemoveAlert(){
+            this.log = null;
+        },
     },
     data: {
         person: null,
         records: [],
-        periodType: null
+        periodType: null,
+        log: null
     }
 });
