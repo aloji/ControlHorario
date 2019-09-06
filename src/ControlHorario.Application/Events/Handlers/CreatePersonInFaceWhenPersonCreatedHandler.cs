@@ -34,7 +34,6 @@ namespace ControlHorario.Application.Events.Handlers
                     await this.iFaceAppService.CreateAsync(person);
 
                 await this.iPersonRepository.UpdateAsync(person);
-
             }
         }
     }

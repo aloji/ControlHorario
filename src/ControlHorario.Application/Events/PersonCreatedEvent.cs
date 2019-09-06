@@ -1,5 +1,4 @@
-﻿using ControlHorario.Domain.Entities;
-using ControlHorario.Domain.Events;
+﻿using ControlHorario.Domain.Events;
 using System;
 
 namespace ControlHorario.Application.Events

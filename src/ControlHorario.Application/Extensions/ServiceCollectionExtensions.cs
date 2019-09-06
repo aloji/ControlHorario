@@ -22,6 +22,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IRecordAppService, RecordAppService>();
             services.AddSingleton<IFaceAppService, FaceAppService>();
 
+            services.AddTransient<IEventHandler<FaceDetectedEvent>, SaveEmotionWhenFaceDetectedHandler>();
             services.AddTransient<IEventHandler<PersonCreatedEvent>, CreatePersonInFaceWhenPersonCreatedHandler>();
 
             return services;

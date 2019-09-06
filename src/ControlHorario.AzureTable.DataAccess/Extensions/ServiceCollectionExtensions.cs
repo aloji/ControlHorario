@@ -17,9 +17,11 @@ namespace Microsoft.Extensions.DependencyInjection
             if(options != null)
                 services.Configure<AzureTableOptions>(options);
 
+            services.AddTransient<IEmotionRepository, EmotionRepository>();
             services.AddTransient<IPersonRepository, PersonRepository>();
             services.AddTransient<IRecordRepository, RecordRepository>();
 
+            services.AddSingleton<IEmotionMapper, EmotionMapper>();
             services.AddSingleton<IPersonMapper, PersonMapper>();
             services.AddSingleton<IRecordMapper, RecordMapper>();
             

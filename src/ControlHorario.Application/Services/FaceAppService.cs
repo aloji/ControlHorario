@@ -1,4 +1,6 @@
-﻿using ControlHorario.Application.Options;
+﻿using ControlHorario.Application.Events;
+using ControlHorario.Application.Options;
+using ControlHorario.Domain.Events;
 using Microsoft.Azure.CognitiveServices.Vision.Face;
 using Microsoft.Azure.CognitiveServices.Vision.Face.Models;
 using Microsoft.Extensions.Options;
@@ -14,11 +16,23 @@ namespace ControlHorario.Application.Services
     public class FaceAppService : IFaceAppService
     {
         readonly IOptionsMonitor<FaceOptions> options;
+        readonly IEventPublisher<FaceDetectedEvent> faceDetectedPublisher;
+        readonly IList<FaceAttributeType> faceAttributes;
 
-        public FaceAppService(IOptionsMonitor<FaceOptions> options)
+        public FaceAppService(IOptionsMonitor<FaceOptions> options,
+             IEventPublisher<FaceDetectedEvent> faceDetectedPublisher)
         {
             this.options = options ??
                 throw new ArgumentNullException(nameof(options));
+
+            this.faceDetectedPublisher = faceDetectedPublisher ??
+                throw new ArgumentNullException(nameof(faceDetectedPublisher));
+
+            this.faceAttributes = new List<FaceAttributeType>
+            {
+                FaceAttributeType.Emotion,
+                FaceAttributeType.Smile
+            };
         }
 
         IFaceClient iFaceClient;
@@ -53,6 +67,7 @@ namespace ControlHorario.Application.Services
             }
             catch (APIErrorException ex) when (ex.Response.StatusCode == HttpStatusCode.Conflict)
             {
+                //
             }
 
             exitPersonGroup = true;
@@ -144,9 +159,23 @@ namespace ControlHorario.Application.Services
                         .Candidates.FirstOrDefault();
 
                     if (candidate != null
-                        && candidate.Confidence > 0.5)
+                        && candidate.Confidence > 0.5 )
                     {
                         result = candidate.PersonId;
+
+                        await faceDetectedPublisher.PublishAsync(
+                            new FaceDetectedEvent(
+                                facePersonId: result.Value, 
+                                smile: detectedFace.FaceAttributes?.Smile,
+                                anger: detectedFace.FaceAttributes?.Emotion?.Anger,
+                                contempt: detectedFace.FaceAttributes?.Emotion?.Contempt,
+                                disgust: detectedFace.FaceAttributes?.Emotion?.Disgust,
+                                fear: detectedFace.FaceAttributes?.Emotion?.Fear,
+                                happiness: detectedFace.FaceAttributes?.Emotion?.Happiness,
+                                neutral: detectedFace.FaceAttributes?.Emotion?.Neutral,
+                                sadness: detectedFace.FaceAttributes?.Emotion?.Sadness,
+                                surprise: detectedFace.FaceAttributes?.Emotion?.Surprise
+                            ));
                     }
                 }
             }
@@ -160,7 +189,8 @@ namespace ControlHorario.Application.Services
             {
                 var detectedFaces = await this.Client.Face.DetectWithStreamAsync(stream,
                     returnFaceId: true,
-                    recognitionModel: RecognitionModel.Recognition02);
+                    recognitionModel: RecognitionModel.Recognition02,
+                    returnFaceAttributes: faceAttributes);
 
                 if (detectedFaces != null && detectedFaces.Any())
                 {
@@ -175,7 +205,8 @@ namespace ControlHorario.Application.Services
             var result = default(DetectedFace);
             var detectedFaces = await this.Client.Face.DetectWithUrlAsync(url,
                 returnFaceId: true,
-                recognitionModel: RecognitionModel.Recognition02);
+                recognitionModel: RecognitionModel.Recognition02,
+                returnFaceAttributes: faceAttributes);
 
             if (detectedFaces != null && detectedFaces.Any())
             {

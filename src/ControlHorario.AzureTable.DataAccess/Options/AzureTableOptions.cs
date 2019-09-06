@@ -5,5 +5,6 @@
         public string ConnectionString { get; set; }
         public string PersonTableName { get; set; }
         public string RecordTableName { get; set; }
+        public string EmotionTableName { get; set; }
     }
 }
