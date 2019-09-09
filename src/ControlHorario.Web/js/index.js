@@ -66,7 +66,12 @@ Vue.component("login", {
         addRecordClick(isStart){
             if(!this.loggedIn)
                 return;        
-            let date = this.isCustomDate ? new Date(this.recordTime) : new Date();
+                
+            const now = new Date();
+            now.setSeconds(0);
+            now.setMilliseconds(0);
+
+            let date = this.isCustomDate ? new Date(this.recordTime) : now;
             const record = {
                 date,
                 isStart  
