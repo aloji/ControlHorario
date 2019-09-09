@@ -1,10 +1,8 @@
-﻿using ControlHorario.Domain.Entities;
-using Microsoft.WindowsAzure.Storage.Table;
-using System;
+﻿using System;
 
-namespace ControlHorario.AzureTable.DataAccess.DbEntities
+namespace ControlHorario.Api.Models.Response
 {
-    public class EmotionDb : TableEntity, IPerson, ITime, IIdentity
+    public class EmotionResponse
     {
         public Guid Id { get; set; }
         public Guid PersonId { get; set; }

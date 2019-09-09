@@ -2,7 +2,7 @@
 
 namespace ControlHorario.Domain.Entities
 {
-    public class Person
+    public class Person : IIdentity
     {
         public Person()
         {

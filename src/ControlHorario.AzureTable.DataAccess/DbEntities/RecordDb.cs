@@ -1,9 +1,10 @@
-﻿using Microsoft.WindowsAzure.Storage.Table;
+﻿using ControlHorario.Domain.Entities;
+using Microsoft.WindowsAzure.Storage.Table;
 using System;
 
 namespace ControlHorario.AzureTable.DataAccess.DbEntities
 {
-    public class RecordDb : TableEntity
+    public class RecordDb : TableEntity, IPerson, ITime, IIdentity
     {
         public Guid Id { get; set; }
         public Guid PersonId { get; set; }

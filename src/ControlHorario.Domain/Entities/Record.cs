@@ -2,7 +2,7 @@
 
 namespace ControlHorario.Domain.Entities
 {
-    public class Record
+    public class Record : IPerson, IIdentity, ITime
     {
         public Guid Id { get; set; }
         public Guid PersonId { get; set; }

@@ -12,6 +12,7 @@ namespace Microsoft.Extensions.DependencyInjection
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
 
+            services.AddSingleton<IEmotionMapper, EmotionMapper>();
             services.AddSingleton<IPersonMapper, PersonMapper>();
             services.AddSingleton<IRecordMapper, RecordMapper>();
 

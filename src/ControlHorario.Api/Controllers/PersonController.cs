@@ -16,12 +16,17 @@ namespace ControlHorario.Api.Controllers
         readonly IPersonAppService iPersonAppService;
         readonly IRecordAppService iRecordAppService;
         readonly IFaceAppService iFaceAppService;
+        readonly IEmotionAppService iEmotionAppService;
         readonly IPersonMapper iPersonMapper;
         readonly IRecordMapper iRecordMapper;
+        readonly IEmotionMapper iEmotionMapper;
         public PersonController(IPersonAppService iPersonAppService,
             IRecordAppService iRecordAppService,
             IFaceAppService iFaceAppService,
-            IPersonMapper iPersonMapper, IRecordMapper iRecordMapper)
+            IEmotionAppService iEmotionAppService,
+            IPersonMapper iPersonMapper, 
+            IRecordMapper iRecordMapper, 
+            IEmotionMapper iEmotionMapper)
         {
             this.iPersonAppService = iPersonAppService ??
                 throw new ArgumentNullException(nameof(iPersonAppService));
@@ -29,10 +34,14 @@ namespace ControlHorario.Api.Controllers
                throw new ArgumentNullException(nameof(iRecordAppService));
             this.iFaceAppService = iFaceAppService ??
                 throw new ArgumentNullException(nameof(iFaceAppService));
+            this.iEmotionAppService = iEmotionAppService ??
+               throw new ArgumentNullException(nameof(iEmotionAppService));
             this.iPersonMapper = iPersonMapper ??
                 throw new ArgumentNullException(nameof(iPersonMapper));
             this.iRecordMapper = iRecordMapper ??
                 throw new ArgumentNullException(nameof(iRecordMapper));
+            this.iEmotionMapper = iEmotionMapper ??
+              throw new ArgumentNullException(nameof(iEmotionMapper));
         }
 
         [HttpGet("{id}", Name = RouteNames.PersonGetById)]
@@ -190,6 +199,20 @@ namespace ControlHorario.Api.Controllers
             await addFace(person.FacePersonId.Value);
 
             return this.Ok();
+        }
+
+        [HttpGet("{id}/emotion")]
+        public async Task<IActionResult> GetEmotionAsync(Guid id, [FromQuery] DateTime? from, [FromQuery] DateTime? to)
+        {
+            var emotions = from.HasValue && to.HasValue
+                ? await this.iEmotionAppService.GetAsync(id, from.Value, to.Value)
+                : await this.iEmotionAppService.GetAsync(id);
+
+            if (emotions == null || !emotions.Any())
+                return this.NotFound();
+
+            var response = emotions.Select(x => this.iEmotionMapper.Convert(x));
+            return this.Ok(response);
         }
     }
 }

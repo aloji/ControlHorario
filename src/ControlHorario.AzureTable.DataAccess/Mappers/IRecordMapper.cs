@@ -3,11 +3,7 @@ using ControlHorario.Domain.Entities;
 
 namespace ControlHorario.AzureTable.DataAccess.Mappers
 {
-    public interface IRecordMapper
+    public interface IRecordMapper : IMapper<Record, RecordDb>
     {
-        RecordDb Convert(Record source,
-           string partitionKey,
-           string rowKey);
-        Record Convert(RecordDb source);
     }
 }
