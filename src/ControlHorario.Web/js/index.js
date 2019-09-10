@@ -134,6 +134,31 @@ Vue.component("records-table", {
                 return item;
             });
             return result;
+        },
+        Hours: function(){
+            let milliseconds = 0;
+            if(this.records && this.records.length > 0 && !(this.records.length % 2))
+                for (let index = this.records.length - 1; index > 0; index = index-2) {
+                    const stop = this.records[index];
+                    const start = this.records[index-1];
+                    
+                    const diffMillSec = new Date(stop.dateTimeUtc) - new Date(start.dateTimeUtc);
+
+                    if(stop.isStart || !start.isStart || diffMillSec < 0){
+                        result = 0;
+                        break;
+                    }
+                    milliseconds += diffMillSec;
+                }
+            
+            let result = 'N/A';
+            if(milliseconds > 0)
+            {
+                const hours = Math.floor((milliseconds / (1000*60*60)) % 24);
+                const minutes = Math.floor((milliseconds / (1000*60)) % 60);
+                result = hours + 'h' + minutes + 'm'
+            }
+            return result;
         }
     },
     methods: {
