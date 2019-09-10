@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ControlHorario.Api.ModelBinder;
 using ControlHorario.Application.Options;
 using ControlHorario.AzureTable.DataAccess.Options;
 using Microsoft.AspNetCore.Builder;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace ControlHorario.Api
@@ -43,7 +45,12 @@ namespace ControlHorario.Api
                 .AddControlHorarioDomain()
                 .AddControlHorarioAzureTable();
 
-            services.AddMvc()
+            services.AddMvc(options => {
+                    options.ModelBinderProviders.Insert(0, new DateTimeModelBinderProvider());
+                })
+                .AddJsonOptions(options => {
+                    options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+                })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddSwaggerGen(c =>

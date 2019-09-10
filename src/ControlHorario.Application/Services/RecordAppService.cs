@@ -33,7 +33,7 @@ namespace ControlHorario.Application.Services
                 var dayRecords = await this.iRecordRepository.GetAsync(day);
                 if (dayRecords != null && dayRecords.Any())
                 {
-                    records.AddRange(dayRecords);
+                    records.AddRange(dayRecords.Where(x => x.DateTimeUtc >= from && x.DateTimeUtc <= to));
                 }
             }
             var result = records.OrderBy(x => x.DateTimeUtc);

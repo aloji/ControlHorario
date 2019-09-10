@@ -18,7 +18,10 @@ namespace ControlHorario.Api.Extensions
                     {
                         result = Convert.FromBase64String(base64Data);
                     }
-                    catch { }
+                    catch
+                    {
+                        //
+                    }
                 }
             }
             return result;
