@@ -57,7 +57,7 @@
                         />
                     </div>
                 </div>
-            </div>
+            </div> 
         </div>
 
         <template id="alert">
@@ -146,6 +146,9 @@
                         <a class="nav-link" href="#" 
                             v-bind:class="{'active': period === 'thismonth'}"
                             v-on:click="getRecords('thismonth')">This Month</a>
+                        <a class="nav-link" href="#" 
+                            v-bind:class="{'active': period === 'previousmonth'}"
+                            v-on:click="getRecords('previousmonth')">Previous Month</a>
                     </nav>
                 </div>
                 <div class="w-100"></div>

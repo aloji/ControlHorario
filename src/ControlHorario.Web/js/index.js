@@ -154,7 +154,7 @@ Vue.component("records-table", {
             let result = 'N/A';
             if(milliseconds > 0)
             {
-                const hours = Math.floor((milliseconds / (1000*60*60)) % 24);
+                const hours = Math.floor((milliseconds / (1000*60*60)));
                 const minutes = Math.floor((milliseconds / (1000*60)) % 60);
                 result = hours + 'h' + minutes + 'm'
             }
@@ -220,6 +220,8 @@ var app = new Vue({
                     return new Date(monday.getFullYear(), monday.getMonth(), monday.getDate());
                 case "thismonth":
                     return new Date(date.getFullYear(), date.getMonth(), 1);
+                case "previousmonth":
+                    return new Date(date.getFullYear(), date.getMonth() - 1, 1);
             }
         },
         getTo(period){
@@ -235,8 +237,11 @@ var app = new Vue({
                     var endWeek = new Date(monday.setDate(monday.getDate() + 6));
                     return new Date(endWeek.getFullYear(), endWeek.getMonth(), endWeek.getDate(), 23, 59, 59);
                 case "thismonth":
-                    const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-                    return new Date(date.getFullYear(), date.getMonth(), lastDay, 23, 59, 59);
+                    const lastDayThisMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+                    return new Date(date.getFullYear(), date.getMonth(), lastDayThisMonth, 23, 59, 59);
+                case "previousmonth":
+                    const lastDayPreMonth = new Date(date.getFullYear(), date.getMonth(), 0).getDate();
+                    return new Date(date.getFullYear(), date.getMonth() - 1, lastDayPreMonth, 23, 59, 59);
             }
         },
         onRemoveRecord(record){
