@@ -1,5 +1,6 @@
 ﻿using ControlHorario.Api.Mappers;
 using ControlHorario.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace ControlHorario.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy = PolicyNames.Admin)]
     public class EmotionController : ControllerBase
     {
         readonly IEmotionMapper iEmotionMapper;

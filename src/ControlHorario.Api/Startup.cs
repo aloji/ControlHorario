@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using ControlHorario.Api.Auth;
 using ControlHorario.Api.ModelBinder;
 using ControlHorario.Application.Options;
 using ControlHorario.AzureTable.DataAccess.Options;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ControlHorario.Api
 {
@@ -22,7 +19,8 @@ namespace ControlHorario.Api
     {
         const string SwaggerName = "ControlHorario.Api";
         const string SwaggerVersion = "v1";
-        
+        const string SwaggerAuthName = "Custom Scheme";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -57,6 +55,31 @@ namespace ControlHorario.Api
             {
                 c.SwaggerDoc(SwaggerVersion, new Info {
                     Title = SwaggerName, Version = SwaggerVersion
+                });
+                c.AddSecurityDefinition(SwaggerAuthName,
+                    new ApiKeyScheme
+                    {
+                        In = "header",
+                        Description = "Please enter valid scheme and token",
+                        Name = "Authorization",
+                        Type = "apiKey"
+                    });
+                c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>> {
+                    { SwaggerAuthName, Enumerable.Empty<string>() },
+                });
+            });
+
+            var authSchemeOptions = this.Configuration.GetSection("AuthSchemeOptions")
+               .Get<AuthSchemeOptions>();
+
+            services.AddAuthKeyScheme(authSchemeOptions);
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(PolicyNames.Admin, policy =>
+                {
+                    policy.AddAuthenticationSchemes(authSchemeOptions.Scheme);
+                    policy.RequireRole(authSchemeOptions.RoleValue);
                 });
             });
 

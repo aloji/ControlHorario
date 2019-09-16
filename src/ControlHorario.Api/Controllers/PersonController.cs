@@ -2,6 +2,7 @@
 using ControlHorario.Api.Mappers;
 using ControlHorario.Api.Models.Request;
 using ControlHorario.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
@@ -56,6 +57,7 @@ namespace ControlHorario.Api.Controllers
         }
 
         [HttpGet("")]
+        [Authorize(Policy = PolicyNames.Admin)]
         public async Task<IActionResult> GetAsync()
         {
             var persons = await this.iPersonAppService.GetAsync();
@@ -67,6 +69,7 @@ namespace ControlHorario.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = PolicyNames.Admin)]
         public async Task<IActionResult> PostAsync(PersonRequest request)
         {
             if (request == null || string.IsNullOrWhiteSpace(request.Name))
@@ -133,6 +136,7 @@ namespace ControlHorario.Api.Controllers
         }
 
         [HttpPost("identifybyurl")]
+        [Authorize(Policy = PolicyNames.Admin)]
         public async Task<IActionResult> FaceIdentifyByUrl([FromQuery] string url)
         {
             if (!url.IsUrl())
@@ -173,6 +177,7 @@ namespace ControlHorario.Api.Controllers
         }
 
         [HttpPost("{id}/facebyurl")]
+        [Authorize(Policy = PolicyNames.Admin)]
         public async Task<IActionResult> AddFaceByUrl(Guid id, [FromQuery] string url)
         {
             if (!url.IsUrl())
