@@ -145,7 +145,7 @@ Vue.component("records-table", {
                     const diffMillSec = new Date(stop.dateTimeUtc) - new Date(start.dateTimeUtc);
 
                     if(stop.isStart || !start.isStart || diffMillSec < 0){
-                        result = 0;
+                        milliseconds = 0;
                         break;
                     }
                     milliseconds += diffMillSec;
