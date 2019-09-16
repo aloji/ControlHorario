@@ -34,7 +34,8 @@ Ejemplo de appsettings.json
   "AzureTableOptions": {
     "ConnectionString": "DefaultEndpointsProtocol=https;AccountName=....;AccountKey=...",
     "PersonTableName": "person",
-    "RecordTableName": "record"
+    "RecordTableName": "record",
+    "EmotionTableName": "emotion"
   },
   "FaceOptions": {
     "SubscriptionKey": "e13e58ba....",
