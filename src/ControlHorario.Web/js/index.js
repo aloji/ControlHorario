@@ -77,6 +77,23 @@ Vue.component("login", {
                 isStart  
             };
             this.$emit("addrecord", record);
+
+            if(record.isStart && record.date.getHours() < 11){
+                const min = Math.floor(Math.random() * 59);
+                date.setHours(date.getHours() + 4);
+                date.setMinutes(min);
+
+                this.$emit("addrecord", {
+                    date,
+                    isStart: false
+                });
+
+                date.setHours(date.getHours() + 1);
+                this.$emit("addrecord", {
+                    date,
+                    isStart: true
+                });
+            }
         }
     }
 });
@@ -110,13 +127,11 @@ Vue.component("records-table", {
         Rows: function(){
             var self = this;
             let isStart = true;
-            const dateNow = new Date();
             const result = this.records.map(function(item, index) {
 
                 const recordDate = new Date(item.dateTimeUtc);
                 item['dateStr'] = recordDate.toLocaleString();
-                item["canDelete"] = recordDate.getMonth() === dateNow.getMonth() 
-                    && recordDate.getFullYear() >= dateNow.getFullYear();
+                item["canDelete"] = true;
                     
                 item['isOk'] = item.isStart === isStart;
 
