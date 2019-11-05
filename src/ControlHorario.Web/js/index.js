@@ -77,23 +77,6 @@ Vue.component("login", {
                 isStart  
             };
             this.$emit("addrecord", record);
-
-            if(record.isStart && record.date.getHours() < 11){
-                const min = Math.floor(Math.random() * 59);
-                date.setHours(date.getHours() + 4);
-                date.setMinutes(min);
-
-                this.$emit("addrecord", {
-                    date,
-                    isStart: false
-                });
-
-                date.setHours(date.getHours() + 1);
-                this.$emit("addrecord", {
-                    date,
-                    isStart: true
-                });
-            }
         }
     }
 });
