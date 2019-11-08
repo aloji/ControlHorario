@@ -1,5 +1,5 @@
 ﻿using ControlHorario.Domain.Entities;
-using Microsoft.WindowsAzure.Storage.Table;
+using Microsoft.Azure.Cosmos.Table;
 using System;
 
 namespace ControlHorario.AzureTable.DataAccess.DbEntities

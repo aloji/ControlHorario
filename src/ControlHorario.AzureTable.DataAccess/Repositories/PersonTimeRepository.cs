@@ -1,8 +1,8 @@
 ﻿using ControlHorario.AzureTable.DataAccess.Mappers;
 using ControlHorario.AzureTable.DataAccess.Options;
 using ControlHorario.Domain.Entities;
+using Microsoft.Azure.Cosmos.Table;
 using Microsoft.Extensions.Options;
-using Microsoft.WindowsAzure.Storage.Table;
 using System;
 using System.Collections.Generic;
 using System.Linq;
