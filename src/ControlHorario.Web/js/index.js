@@ -86,6 +86,16 @@ Vue.component("person-data", {
     props:['person']
 });
 
+Vue.component("report-data", {
+    template: '#report-data',
+    props:['report'],
+    computed: {
+        Message: function(){
+            return this.report.period + 'report is '; 
+        }
+    }
+});
+
 Vue.component("alert", {
     template: '#alert',
     props: {
@@ -199,6 +209,7 @@ var app = new Vue({
         onLogin(token){
             this.person = token;
             this.onGetRecords('today');
+            this.onGetReport('yesterday');
         },
         getMonday(date) {
             const day = date.getDay();
@@ -310,10 +321,9 @@ var app = new Vue({
         onGetRecords(period){
             if(!period || this.periodType === period)
                 return;
-            
+
             this.periodType = period;
 
-            const date = new Date();
             const from = this.getFrom(this.periodType);
             const to = this.getTo(this.periodType);
             const self = this;
@@ -332,6 +342,29 @@ var app = new Vue({
                     console.log(error);
                     self.records = [];
                 });
+        },
+        onGetReport(period){
+            if(!period)
+                return;
+            
+            const from = this.getFrom(period);
+            const to = this.getTo(period);
+            const self = this;
+
+            let api = self.getPersonUrl() + self.person.id + '/report';
+            if(from && to){
+                api += "?from=" + from.toISOString() + "&to=" + to.toISOString();
+                axios.get(api)
+                    .then(function (response) {
+                        let report = response.data;
+                        report['period'] = period;
+                        self.report = report;
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        self.report = null;
+                    });
+            }
         },
         onShowError(msg){
             this.log = {
@@ -353,6 +386,7 @@ var app = new Vue({
         person: null,
         records: [],
         periodType: null,
-        log: null
+        log: null,
+        report: null
     }
 });

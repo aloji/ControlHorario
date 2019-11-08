@@ -49,6 +49,12 @@
                     </div>
                     <div class="w-100"></div>
                     <div class="row">
+                        <report-data 
+                            v-bind:report="report"
+                        />
+                    </div>
+                    <div class="w-100"></div>
+                    <div class="row">
                         <records-table
                             v-bind:records="records" 
                             v-bind:period="periodType" 
@@ -128,6 +134,15 @@
 
         <template id="person-data">
             <h6 v-if=person class="p-3">{{person.name}}</h6>
+        </template>
+
+        <template id="report-data">
+            <div v-if=report class="alert alert-success"
+                v-bind:class="[report.isValid ? 'alert-success' : 'alert-danger']"
+                role="alert">
+                <h6 class="alert-heading">{{report.period}} report</h6>
+                <p>TotalHours: {{report.totalHours}}</p>
+            </div>
         </template>
 
         <template id="records-table">
