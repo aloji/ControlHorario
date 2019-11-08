@@ -18,16 +18,20 @@ namespace ControlHorario.Api.Controllers
         readonly IRecordAppService iRecordAppService;
         readonly IFaceAppService iFaceAppService;
         readonly IEmotionAppService iEmotionAppService;
+        readonly IReportAppService iReportAppService;
         readonly IPersonMapper iPersonMapper;
         readonly IRecordMapper iRecordMapper;
         readonly IEmotionMapper iEmotionMapper;
+        readonly IReportMapper iReportMapper;
         public PersonController(IPersonAppService iPersonAppService,
             IRecordAppService iRecordAppService,
             IFaceAppService iFaceAppService,
             IEmotionAppService iEmotionAppService,
+            IReportAppService iReportAppService,
             IPersonMapper iPersonMapper, 
             IRecordMapper iRecordMapper, 
-            IEmotionMapper iEmotionMapper)
+            IEmotionMapper iEmotionMapper,
+            IReportMapper iReportMapper)
         {
             this.iPersonAppService = iPersonAppService ??
                 throw new ArgumentNullException(nameof(iPersonAppService));
@@ -36,13 +40,17 @@ namespace ControlHorario.Api.Controllers
             this.iFaceAppService = iFaceAppService ??
                 throw new ArgumentNullException(nameof(iFaceAppService));
             this.iEmotionAppService = iEmotionAppService ??
-               throw new ArgumentNullException(nameof(iEmotionAppService));
+               throw new ArgumentNullException(nameof(iEmotionAppService)); 
+            this.iReportAppService = iReportAppService ??
+                throw new ArgumentNullException(nameof(iReportAppService));
             this.iPersonMapper = iPersonMapper ??
                 throw new ArgumentNullException(nameof(iPersonMapper));
             this.iRecordMapper = iRecordMapper ??
                 throw new ArgumentNullException(nameof(iRecordMapper));
             this.iEmotionMapper = iEmotionMapper ??
               throw new ArgumentNullException(nameof(iEmotionMapper));
+            this.iReportMapper = iReportMapper ??
+             throw new ArgumentNullException(nameof(iReportMapper));
         }
 
         [HttpGet("{id}", Name = RouteNames.PersonGetById)]
@@ -217,6 +225,18 @@ namespace ControlHorario.Api.Controllers
                 return this.NotFound();
 
             var response = emotions.Select(x => this.iEmotionMapper.Convert(x));
+            return this.Ok(response);
+        }
+
+        [HttpGet("{id}/report")]
+        public async Task<IActionResult> GetReportAsync(Guid id, [FromQuery] DateTime from, [FromQuery] DateTime to)
+        {
+            var report = await this.iReportAppService.GetAsync(id, from, to);
+
+            if (report == null)
+                return this.NotFound();
+
+            var response = this.iReportMapper.Convert(report);
             return this.Ok(response);
         }
     }

@@ -15,7 +15,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<IEmotionMapper, EmotionMapper>();
             services.AddSingleton<IPersonMapper, PersonMapper>();
             services.AddSingleton<IRecordMapper, RecordMapper>();
-
+            services.AddSingleton<IReportMapper, ReportMapper>();
+            
             services.AddSingleton<IHostedService, TrainingTask>();
 
             return services;

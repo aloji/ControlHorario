@@ -1,5 +1,4 @@
-﻿using ControlHorario.Application.Dto;
-using ControlHorario.Domain.Entities;
+﻿using ControlHorario.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
