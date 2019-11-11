@@ -88,12 +88,7 @@ Vue.component("person-data", {
 
 Vue.component("report-data", {
     template: '#report-data',
-    props:['report'],
-    computed: {
-        Message: function(){
-            return this.report.period + 'report is '; 
-        }
-    }
+    props:['report']
 });
 
 Vue.component("alert", {
@@ -209,12 +204,17 @@ var app = new Vue({
         onLogin(token){
             this.person = token;
             this.onGetRecords('today');
-            this.onGetReport('yesterday');
+            const period = new Date().getDay() === 1 ? 'previousweek' : 'yesterday';
+            this.onGetReport(period);
         },
         getMonday(date) {
             const day = date.getDay();
             const diff = date.getDate() - day + (day == 0 ? -6:1);
             return new Date(date.setDate(diff));
+        },
+        getBeforeOneWeek(date){
+            const weekMills = 60*60*24*7*1000;
+            return new Date(date.getTime() - weekMills);
         },
         getFrom(period){
             const date = new Date();
@@ -231,6 +231,10 @@ var app = new Vue({
                     return new Date(date.getFullYear(), date.getMonth(), 1);
                 case "previousmonth":
                     return new Date(date.getFullYear(), date.getMonth() - 1, 1);
+                case "previousweek":
+                    const beforeOneWeek = this.getBeforeOneWeek(date);
+                    const beforeMonday = this.getMonday(beforeOneWeek);
+                    return new Date(beforeMonday.getFullYear(), beforeMonday.getMonth(), beforeMonday.getDate());
             }
         },
         getTo(period){
@@ -251,6 +255,11 @@ var app = new Vue({
                 case "previousmonth":
                     const lastDayPreMonth = new Date(date.getFullYear(), date.getMonth(), 0).getDate();
                     return new Date(date.getFullYear(), date.getMonth() - 1, lastDayPreMonth, 23, 59, 59);
+                case "previousweek":
+                    const beforeOneWeek = this.getBeforeOneWeek(date);
+                    const beforeMonday = this.getMonday(beforeOneWeek);
+                    var beforeEndWeek = new Date(beforeMonday.setDate(beforeMonday.getDate() + 6));
+                    return new Date(beforeEndWeek.getFullYear(), beforeEndWeek.getMonth(), beforeEndWeek.getDate(), 23, 59, 59);
             }
         },
         onRemoveRecord(record){
