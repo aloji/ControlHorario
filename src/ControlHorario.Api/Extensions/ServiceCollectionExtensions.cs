@@ -18,6 +18,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<IReportMapper, ReportMapper>();
             
             services.AddSingleton<IHostedService, TrainingTask>();
+            services.AddSingleton<IHostedService, EmailReportingTask>();
 
             return services;
         }

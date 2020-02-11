@@ -37,6 +37,9 @@ namespace ControlHorario.Api
             services.Configure<FaceOptions>(
                 this.Configuration.GetSection("FaceOptions"));
 
+            services.Configure<EmailReportingOptions>(
+                this.Configuration.GetSection("EmailReportingOptions"));
+
             services
                 .AddControlHorarioApi()
                 .AddControlHorarioApp()
